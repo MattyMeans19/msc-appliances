@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "MSC Appliances",
-  description: "The best source for new and used Appliances in the Albuquerque Metro and Rio Rancho area. Locally owned and operated.",
+  description: "The best source for used, reconditioned Appliance sales in the Albuquerque Metro and Rio Rancho area. Locally owned and operated.",
 };
 
 export default function RootLayout({
@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col w-screen h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col max-w-screen h-screen`}
       >
         <Navbar />
         {children}

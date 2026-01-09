@@ -1,5 +1,10 @@
 @import "tailwindcss";
+@import "tailwindcss-animated";
 
 .Nav-Item{
-  @apply lg:text-2xl px-5 border-b-5 border-gray-400/15 rounded-2xl place-content-end
-} 
+  @apply lg:text-2xl px-5 border-b-5 border-gray-400/15 rounded-2xl place-content-end;
+}
+
+.Text-Box{
+  @apply col-span-full lg:col-span-2 border-2 border-black rounded-3xl bg-red-500 md:row-span-1 text-center text-white text-2xl lg:text-5xl p-5 shadow-2xl;
+}
