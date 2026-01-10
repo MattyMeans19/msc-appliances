@@ -6,5 +6,5 @@
 }
 
 .Text-Box{
-  @apply col-span-full lg:col-span-2 border-2 border-black rounded-3xl bg-red-500 md:row-span-1 text-center text-white text-2xl lg:text-5xl p-5 shadow-2xl;
+  @apply col-span-full lg:col-span-2 md:row-span-1 text-center text-black text-2xl lg:text-4xl p-5;
 }
