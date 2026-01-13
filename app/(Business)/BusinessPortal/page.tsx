@@ -1,6 +1,6 @@
 'use client'
 import { useActionState } from "react";
-import { Login } from "@/actions/business/Login";
+import { Login } from "@/actions/business/actions";
 
 export default function Portal(){
     const [formState, formAction] = useActionState(Login, undefined)
