@@ -34,3 +34,31 @@ export async function Login(formState: FormState, formData: FormData){
     }
 
 }
+
+export async function Logout(){
+    await deleteSession();
+    redirect("/BusinessPortal")
+}
+
+export async function GetEmployees(user: string){
+    let currentUser = user;
+    let access;
+    try{
+        const userRequest = await pool.query('SELECT privilege FROM employees WHERE username = $1', [currentUser]);
+        let userResponse = userRequest.rows;
+        access = userResponse[0].privilege;
+        if(access === "Admin" || access === "Manager"){
+            try{
+                const listRequest = await pool.query('SELECT * FROM employees');
+                let listResults = listRequest.rows;
+                return listResults;
+                
+            } catch(error){
+                return error
+            }
+        }
+        } catch(error){
+            console.log(error)
+            alert(error)
+        }
+}
