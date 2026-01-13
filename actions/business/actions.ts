@@ -54,7 +54,16 @@ export async function GetEmployees(user: string){
                 return listResults;
                 
             } catch(error){
-                return error
+                alert(error)
+            }
+        } else {
+            try{
+                const listRequest = await pool.query('SELECT * FROM employees WHERE username = $1', [currentUser]);
+                let listResults = listRequest.rows;
+                return listResults;
+                
+            } catch(error){
+                alert(error)
             }
         }
         } catch(error){
