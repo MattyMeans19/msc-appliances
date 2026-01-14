@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import {decrypt} from "@/lib/session";
 import { redirect } from "next/navigation";
 import PortalHeader from "@/components/portal-header";
+import SpecialsEditor from "@/components/specials-editor";
 
 export default async function UserConsole(){
     const cookie = (await cookies()).get('session')?.value;
@@ -22,9 +23,7 @@ export default async function UserConsole(){
             />
 
             <div className="grow flex flex-col gap-20 md:grid grid-cols-6">
-                <div className="border text-7xl p-20 mx-10 col-span-3 row-span-2">
-                    <span>Special's pop up box editor</span>
-                </div>
+                <SpecialsEditor />
                 <div className="border text-5xl mx-10 p-20 col-start-4 col-span-3 row-span-2">
                     <span>Customer look up box</span>
                 </div>

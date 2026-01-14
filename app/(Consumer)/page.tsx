@@ -1,10 +1,11 @@
 import Image from "next/image";
 import Appliances from "@/public/Appliances.png";
 import Link from "next/link";
+import SpecialsPopup from "@/components/specials-modal";
 
 export default function Home() {
   return (
-    <div className="grow grid grid-cols-4 pt-10 lg:pt-0 px-10 gap-5">
+    <div className="grow grid grid-cols-4 pt-10 lg:pt-0 px-10 gap-5 relative">
           <div className="row-start-5 col-span-2 md:text-3xl text-black h-full place-content-center w-full text-center">
               <Link href="https://www.google.com/maps/place/MSC+Appliance+Sales+%26+Service+LLC/@35.0876164,-106.5811559,
               17z/data=!3m1!4b1!4m6!3m5!1s0x87220ae0171528d5:0x2b6d81b71f870375!8m2!3d35.0876164!4d-106.5811559!16s%2Fg%2F11c3svpk5w?
@@ -46,6 +47,7 @@ export default function Home() {
           </p>
         </div>
         
+        <SpecialsPopup />
     </div>
   );
 }
