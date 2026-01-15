@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Appliances from "@/public/Appliances.png";
 import Link from "next/link";
-import SpecialsPopup from "@/components/specials-modal";
+import Specials from "@/components/specials-modal";
 
 export default function Home() {
   return (
@@ -16,14 +16,7 @@ export default function Home() {
           <div className="col-span-full col-start-3 row-start-5 text-center place-content-center md:text-2xl">
               <p>Business Hours:<br/>Monday-Friday 9am-5pm <br/>Saturday 9am-3pm<br/>Sunday CLOSED</p>
           </div>
-        <Image 
-          src={Appliances}
-          width={800}
-          height={800}
-          alt="Array of appliances for display"
-          className="col-span-full lg:col-span-2 row-start-1 row-span-2 rounded-2xl shadow-2xl shadow-black"
-          loading="eager"
-        />
+          <Specials />
         <div className="Text-Box row-start-3 place-self-start place-content-center h-full">
           <p>
             At Metro Service Company LLC we are dedicated to providing the best 
@@ -31,7 +24,7 @@ export default function Home() {
           </p>
           <br/>
           <Link href="/Products" className="p-2 lg:p-5 border-5 shadow-lg shadow-gray-800 border-slate-700 text-white bg-red-500 rounded-3xl">
-            Shop Now!
+            Shop All Products
           </Link>
         </div>
 
@@ -47,7 +40,6 @@ export default function Home() {
           </p>
         </div>
         
-        <SpecialsPopup />
     </div>
   );
 }

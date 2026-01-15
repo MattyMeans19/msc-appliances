@@ -1,21 +1,37 @@
 "use client";
 
-import { CldUploadWidget } from 'next-cloudinary';
+import { CldUploadButton, CloudinaryUploadWidgetResults } from 'next-cloudinary';
+import { useState, useEffect } from 'react';
 
-export default function SignedUpload() {
+interface Props { 
+  newName: (name:string) => void;
+}
+
+export default function BGPhotoUpload(props: Props) {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) return null;
+
   return (
-<CldUploadWidget
-  signatureEndpoint="/api/sign-cloudinary" // Just a string!
+<CldUploadButton
+  uploadPreset='single-no-camera'
   options={{
-    apiKey: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
-    sources: ["local", "url", "camera"],
-    multiple: false
+    sources: ["local", "url"],
+    multiple: false,
   }}
-  onSuccess={(results) => {
-    // Save to DB logic here
-  }}
+  onSuccess={(results: CloudinaryUploadWidgetResults) => {
+  if (results.info && typeof results.info !== 'string') {
+    const publicId = results.info.public_id; 
+    props.newName(publicId)
+  }
+}}
+className='rounded-full p-2 bg-red-500 w-fit self-center'
 >
-  {({ open }) => <button onClick={() => open()}>Upload Photo</button>}
-</CldUploadWidget>
+    Upload Photo
+</CldUploadButton>
   );
 }

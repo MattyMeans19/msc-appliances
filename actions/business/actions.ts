@@ -2,7 +2,7 @@
 
 import bcrypt from "bcrypt";
 import pool from "@/lib/db";
-import { FormState } from "@/lib/definitions";
+import { FormState, Specials } from "@/lib/definitions";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { redirect } from "next/navigation";
 import { createSession, deleteSession } from "@/lib/session";
@@ -70,4 +70,13 @@ export async function GetEmployees(user: string){
             console.log(error)
             alert(error)
         }
+}
+
+
+export async function NewSpecial(special: Specials){
+    let newSpecial = special.variables;
+    let name = newSpecial.name;
+    let description = newSpecial.info;
+    let color = newSpecial.textColor;
+    let bg = newSpecial.bgImage;
 }

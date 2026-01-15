@@ -24,3 +24,12 @@ export type FormState =
     username: string, 
     expiresAt: Date
   }
+
+  export type Specials = {
+    variables: {
+      name: string,
+      info: string,
+      textColor: string,
+      bgImage: string
+    }
+  }
