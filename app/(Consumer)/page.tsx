@@ -1,5 +1,3 @@
-import Image from "next/image";
-import Appliances from "@/public/Appliances.png";
 import Link from "next/link";
 import Specials from "@/components/specials-modal";
 

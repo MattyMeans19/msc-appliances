@@ -26,10 +26,9 @@ export type FormState =
   }
 
   export type Specials = {
-    variables: {
-      name: string,
-      info: string,
-      textColor: string,
-      bgImage: string
-    }
+    name: string,
+    info: string,
+    textColor: string,
+    bgImage: string,
+    current: boolean
   }
