@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Specials from "@/components/specials-modal";
+import Specials from "@/components/specials/specials-modal";
 
 export default function Home() {
   return (

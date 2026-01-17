@@ -1,13 +1,13 @@
-import { GetAllSpecials, GetSpecial } from "@/actions/business/actions"
+import { GetAllSpecials } from "@/actions/business/specials"
 import SpecialsEditor from "./specials-editor"
 
 export default async function SpecialsSelector(){
     const specials = await GetAllSpecials();
-    const current = await GetSpecial();
+    
     return(
         <SpecialsEditor
             specials = {specials!.specialsResult}
-            current={current}
+
         />
     )
 }

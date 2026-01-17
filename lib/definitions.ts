@@ -32,3 +32,18 @@ export type FormState =
     bgImage: string,
     current: boolean
   }
+
+  export type Product = {
+    sku: string,
+    name: string, 
+    info: string,
+    type: string,
+    subtype:string,
+    cost: number,
+    price: number,
+    count: number,
+    images: string[],
+    fblink: string,
+    deliverable: boolean,
+    brand: string
+  }

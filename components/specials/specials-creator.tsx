@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react"
 import BGPhotoUpload from "./specials-photo-upload"
 import { CldImage } from "next-cloudinary"
-import { NewSpecial } from "@/actions/business/actions"
+import { NewSpecial } from "@/actions/business/specials"
 
 export default function SpecialsCreator(){
     const [descriptionLength, updateLength] = useState(0)

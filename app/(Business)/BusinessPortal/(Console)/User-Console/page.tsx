@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import {decrypt} from "@/lib/session";
 import { redirect } from "next/navigation";
 import PortalHeader from "@/components/portal-header";
-import SpecialsSelector from "@/components/special-selector";
+import SpecialsSelector from "@/components/specials/special-selector";
 
 export default async function UserConsole(){
     const cookie = (await cookies()).get('session')?.value;
