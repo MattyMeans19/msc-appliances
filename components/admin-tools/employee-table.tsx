@@ -63,7 +63,8 @@ export default function EmployeeTable(props: Employees){
                         <td className="Table-item"><input autoComplete="off" type="text" id="fname" placeholder="First Name" onChange={(e) => changeUserInfo(prev => ({ ...prev, fname: e.target.value}))}></input></td>
                         <td className="Table-item"><input autoComplete="off" type="text" id="lname" placeholder="Last Name" onChange={(e) => changeUserInfo(prev => ({ ...prev, lname: e.target.value}))}></input></td>
                         <td className="Table-item">
-                            <select id="privileges" defaultValue="Employee" onChange={(e) => changeUserInfo(prev => ({ ...prev, privilege: e.target.value}))}>
+                            <select id="privileges" defaultValue="" onChange={(e) => changeUserInfo(prev => ({ ...prev, privilege: e.target.value}))}>
+                                <option></option>
                                 <option value="Employee">Employee</option>
                                 <option value="Manger">Manger</option>
                                 <option value="Admin">Admin</option>
