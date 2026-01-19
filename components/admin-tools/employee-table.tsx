@@ -4,7 +4,8 @@ import EmployeeRow from "./employee-row";
 import { CreateNewUser } from "@/actions/business/actions";
 
 interface Employees {
-    array: any[]
+    array: any[],
+    curentUser: string
 
 }
 export default function EmployeeTable(props: Employees){
@@ -25,7 +26,8 @@ export default function EmployeeTable(props: Employees){
         const infoComplete = Object.values(newUser).every(value => value !== "");
         if(infoComplete){
             const newResult = await CreateNewUser(newUser);
-            alert(newResult); 
+            alert(newResult);
+            window.location.reload();
         } else {
             alert("Please fill out all fields for new user!")
         }
@@ -53,21 +55,22 @@ export default function EmployeeTable(props: Employees){
                         fname={employee.fname}
                         lname={employee.lname}
                         privilege={employee.privilege}
+                        currentUser={props.curentUser}
                     />
                 ))}
                     <tr className={`${newActive ? 'visible' : 'hidden'}`}>
-                        <td className="Table-item"><input type="text" id="username" placeholder="User Name" onChange={(e) => changeUserInfo(prev => ({ ...prev, username: e.target.value}))}></input></td>
-                        <td className="Table-item"><input type="text" id="fname" placeholder="First Name" onChange={(e) => changeUserInfo(prev => ({ ...prev, fname: e.target.value}))}></input></td>
-                        <td className="Table-item"><input type="text" id="lname" placeholder="Last Name" onChange={(e) => changeUserInfo(prev => ({ ...prev, lname: e.target.value}))}></input></td>
+                        <td className="Table-item"><input autoComplete="off" type="text" id="username" placeholder="User Name" onChange={(e) => changeUserInfo(prev => ({ ...prev, username: e.target.value}))}></input></td>
+                        <td className="Table-item"><input autoComplete="off" type="text" id="fname" placeholder="First Name" onChange={(e) => changeUserInfo(prev => ({ ...prev, fname: e.target.value}))}></input></td>
+                        <td className="Table-item"><input autoComplete="off" type="text" id="lname" placeholder="Last Name" onChange={(e) => changeUserInfo(prev => ({ ...prev, lname: e.target.value}))}></input></td>
                         <td className="Table-item">
-                            <select id="privileges" onChange={(e) => changeUserInfo(prev => ({ ...prev, privilege: e.target.value}))}>
+                            <select id="privileges" defaultValue="Employee" onChange={(e) => changeUserInfo(prev => ({ ...prev, privilege: e.target.value}))}>
                                 <option value="Employee">Employee</option>
                                 <option value="Manger">Manger</option>
                                 <option value="Admin">Admin</option>
                             </select>
                         </td>
                         <td className="Table-item flex justify-between">
-                            <input className="w-full" type="text" id="password"  placeholder="Password"
+                            <input autoComplete="off" className="w-full" type="text" id="password"  placeholder="Password"
                             onChange={(e) => changeUserInfo(prev => ({ ...prev, password: e.target.value}))}>
                             </input>
                             <button onClick={() =>(toggleNew)} className="active:border-2 border-red-500" onClickCapture={() => (SaveNew())}>💾</button>

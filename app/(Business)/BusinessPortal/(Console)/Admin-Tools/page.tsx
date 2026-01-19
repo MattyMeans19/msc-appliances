@@ -16,6 +16,7 @@ export default async function AdminTools(){
     if(currentUser === undefined){
         redirect("/BusinessPortal")
     }
+    
 
     return(
      <div className="grow flex flex-col">
@@ -36,6 +37,7 @@ export default async function AdminTools(){
             </div>
             <EmployeeTable 
                 array={userList}
+                curentUser={currentUser}
             />
         </div>
      </div>

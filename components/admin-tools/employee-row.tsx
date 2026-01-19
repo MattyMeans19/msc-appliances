@@ -1,4 +1,5 @@
 'use client';
+import { DeleteUser } from "@/actions/business/actions";
 import { useState } from "react";
 
 interface Employee {
@@ -6,7 +7,8 @@ interface Employee {
     username: string,
     fname: string,
     lname: string,
-    privilege: string
+    privilege: string,
+    currentUser: string,
 }
 
 export default function EmployeeRow(employee: Employee){
@@ -22,10 +24,27 @@ export default function EmployeeRow(employee: Employee){
     function toggleEdit(){
        changeActive(!editActive)
     }
+    function CancelEdit(){
+        changeUserInfo({
+            id: employee.id,
+            username: employee.username,
+            fname: employee.fname,
+            lname: employee.lname,
+            privilege: employee.privilege, 
+        })
+        toggleEdit();
+    }
     function SaveEdit(){
 
     }
-    function Delete(){
+    async function Delete(){
+        if(userInfo.username != employee.currentUser){
+            const deleteRequest = await DeleteUser(userInfo.id);
+            alert(deleteRequest);
+            window.location.reload();           
+        } else {
+            alert("Cannot Delete Self!")
+        }
 
     }
 
@@ -33,26 +52,23 @@ export default function EmployeeRow(employee: Employee){
     return(
         <tr>
             <td className="Table-item">
-                {editActive ? 
-                <input className="w-full" type="text" id="username" placeholder={employee.username} 
-                onChange={(e) => changeUserInfo(prev =>({...prev, username: e.target.value}))}></input> 
-                :employee.username}
+                {employee.username}
             </td>
             <td className="Table-item">
                 {editActive ? 
-                <input className="w-full" type="text" id="fname" placeholder={employee.fname} 
+                <input className="w-full" type="text" id="fName" placeholder={employee.fname} 
                 onChange={(e) => changeUserInfo(prev =>({...prev, fname: e.target.value }))}></input> 
                 :employee.fname}
             </td>
             <td className="Table-item">
                 {editActive ? 
-                <input className="w-full" type="text" id="lname" placeholder={employee.lname} 
+                <input className="w-full" type="text" id="lName" placeholder={employee.lname} 
                 onChange={(e) => changeUserInfo(prev =>({...prev, lname: e.target.value }))}></input> 
                 :employee.lname}
             </td>
             <td className="Table-item">
                 {editActive ? 
-                <select id="privileges" onChange={(e) => changeUserInfo(prev => ({ ...prev, privilege: e.target.value}))}>
+                <select id="privilege" defaultValue="Employee" onChange={(e) => changeUserInfo(prev => ({ ...prev, privilege: e.target.value}))}>
                     <option value="Employee">Employee</option>
                     <option value="Manger">Manger</option>
                     <option value="Admin">Admin</option>
@@ -62,16 +78,16 @@ export default function EmployeeRow(employee: Employee){
             <td className="Table-item">
                 {editActive ?
                 <div className="flex flex-nowrap justify-between">
-                    <input className="w-full" type="text" id="password" placeholder="password" 
+                    <input className="w-full" type="text" id="newPassword" placeholder="password" 
                     onChange={(e) => changeUserInfo(prev =>({...prev, password: e.target.value }))}>
                     </input>
-                    <button onClick={() =>(toggleEdit())}>💾</button>
-                    <button onClick={() =>(toggleEdit())}>❌</button>    
+                    <button onClick={() =>(SaveEdit())}>💾</button>
+                    <button onClick={() =>(CancelEdit())}>❌</button>    
                 </div>
                 :
                 <div>
                     <button onClick={() =>(toggleEdit())}>📝</button>
-                    <button>🗑️</button>   
+                    <button onClick={() => (Delete())}>🗑️</button>   
                 </div>
                 }
             </td>                           

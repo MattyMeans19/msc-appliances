@@ -90,3 +90,13 @@ export async function CreateNewUser(newUser: NewUser){
         return "Failed to create user!"
     }
 }
+
+export async function DeleteUser(id: number){
+    try{
+        await pool.query("DELETE FROM employees WHERE id = $1", [id])
+        return "User Deleted!"
+    } catch(error){
+        console.log(error);
+        return "Failed to delete user!"
+    }
+} 
