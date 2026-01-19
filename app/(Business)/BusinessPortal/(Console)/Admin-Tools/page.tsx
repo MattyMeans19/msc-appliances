@@ -3,7 +3,7 @@ import {decrypt} from "@/lib/session";
 import { redirect } from "next/navigation";
 import PortalHeader from "@/components/portal-header";
 import { GetEmployees } from "@/actions/business/actions";
-import EmployeeTable from "@/components/employee-table";
+import EmployeeTable from "@/components/admin-tools/employee-table";
 
 
 export default async function AdminTools(){
@@ -25,29 +25,18 @@ export default async function AdminTools(){
             tools="bg-gray-400"
         />
         <div className="m-10 grow border flex flex-col p-5 gap-10">
-            <h2 className="text-center">Admin Tools details will go here</h2>
-            <div className="border-t grow">
-                <table className="w-full">
-                    <thead>
-                        <tr>
-                            <th className="Table-header">Username</th>
-                            <th className="Table-header">First Name</th>
-                            <th className="Table-header">Last Name</th>
-                            <th className="Table-header">Privileges</th>
-                            <th className="Table-header">Edit</th>
-                        </tr>
-                    </thead>
-                    {userList.map((employee) =>(
-                        <EmployeeTable
-                            key={employee.id}
-                            username={employee.username}
-                            fName={employee.fname}
-                            lName={employee.lname}
-                            privileges={employee.privilege}
-                        />
-                    ))}
-                </table>
+            <div className="bg-slate-400 p-5 text-2xl w-full text-center rounded-2xl">
+                <h2>Inventory Access - Admin, Manager, Employee</h2>
+                <h2>Create new users- Admin, Manager</h2>
+                <h2>Delete Users- Admin</h2>
+                <h2>Create New Specials- Admin, Manager</h2>
+                <h2>Change Specials- Admin, Manager</h2>
+                <h2>Edit any user- Admin</h2>
+                <h2>Any user can edit their own data.</h2>
             </div>
+            <EmployeeTable 
+                array={userList}
+            />
         </div>
      </div>
     )

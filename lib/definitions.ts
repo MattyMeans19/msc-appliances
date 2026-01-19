@@ -1,12 +1,23 @@
 
-export type Employee = {
-    fname: string,
-    lname: string,
-    access: "Admin" | "Manager" | "Employee",
-}
-
 export type Employee_Login = {
     username: string, 
+    password: string
+}
+
+export type User = {
+    id: number,
+    username: string, 
+    fname: string,
+    lname: string,
+    privilege: string,
+    password: string
+}
+
+export type NewUser = {
+    username: string, 
+    fname: string,
+    lname: string,
+    privilege: string,
     password: string
 }
 

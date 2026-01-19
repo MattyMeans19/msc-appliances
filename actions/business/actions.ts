@@ -2,7 +2,7 @@
 
 import bcrypt from "bcrypt";
 import pool from "@/lib/db";
-import { FormState } from "@/lib/definitions";
+import { FormState, NewUser } from "@/lib/definitions";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { redirect } from "next/navigation";
 import { createSession, deleteSession } from "@/lib/session";
@@ -72,4 +72,21 @@ export async function GetEmployees(user: string){
         }
 }
 
+export async function CreateNewUser(newUser: NewUser){
+    const userName = newUser.username;
+    const fName = newUser.fname;
+    const lName = newUser.lname;
+    const privilege = newUser.privilege;
+    const password = newUser.password;
 
+    let saltRounds = 12;
+    let hashedPw = await bcrypt.hash(password, saltRounds);
+
+    try{
+        await pool.query("INSERT INTO employees(username, password, fname, lname, privilege) VALUES($1, $2, $3, $4, $5)", [userName, hashedPw, fName, lName, privilege]);
+        return "New user created!"
+    } catch(error){
+        console.log(error);
+        return "Failed to create user!"
+    }
+}

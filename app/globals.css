@@ -12,3 +12,10 @@
 .Portal-Btn{
   @apply p-2 rounded-t-2xl md:text-2xl border border-red-400/40 place-content-end;
 }
+
+.Table-header{
+  @apply text-2xl bg-slate-400 border;
+}
+.Table-item{
+  @apply text-center border; 
+}
