@@ -50,23 +50,23 @@ export default function EmployeeRow(employee: Employee){
 
 
     return(
-        <tr>
-            <td className="Table-item">
+        <div className="grid grid-cols-5">
+            <span className="Table-item">
                 {employee.username}
-            </td>
-            <td className="Table-item">
+            </span>
+            <span className="Table-item">
                 {editActive ? 
                 <input className="w-full" type="text" id="fName" placeholder={employee.fname} 
                 onChange={(e) => changeUserInfo(prev =>({...prev, fname: e.target.value }))}></input> 
                 :employee.fname}
-            </td>
-            <td className="Table-item">
+            </span>
+            <span className="Table-item">
                 {editActive ? 
                 <input className="w-full" type="text" id="lName" placeholder={employee.lname} 
                 onChange={(e) => changeUserInfo(prev =>({...prev, lname: e.target.value }))}></input> 
                 :employee.lname}
-            </td>
-            <td className="Table-item">
+            </span>
+            <span className="Table-item">
                 {editActive ? 
                 <select id="privilege" defaultValue="Employee" onChange={(e) => changeUserInfo(prev => ({ ...prev, privilege: e.target.value}))}>
                     <option value="Employee">Employee</option>
@@ -74,8 +74,8 @@ export default function EmployeeRow(employee: Employee){
                     <option value="Admin">Admin</option>
                 </select> 
                 :employee.privilege}
-            </td>
-            <td className="Table-item">
+            </span>
+            <span className="Table-item">
                 {editActive ?
                 <div className="flex flex-nowrap justify-between">
                     <input className="w-full" type="text" id="newPassword" placeholder="password" 
@@ -90,7 +90,7 @@ export default function EmployeeRow(employee: Employee){
                     <button onClick={() => (Delete())}>🗑️</button>   
                 </div>
                 }
-            </td>                           
-        </tr>
+            </span>                           
+        </div>
     )
 }

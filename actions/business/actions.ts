@@ -40,6 +40,16 @@ export async function Logout(){
     redirect("/BusinessPortal")
 }
 
+export async function CheckAccess(uName: string){
+    try{
+        const accessRequest = await pool.query("SELECT privilege FROM employees WHERE username = $1", [uName])
+        let accessResults = accessRequest.rows;
+        return accessResults[0].privilege;
+    } catch(error){
+        console.log(error + "Couldn't fetch user access");
+    }
+}
+
 export async function GetEmployees(user: string){
     let currentUser = user;
     let access;

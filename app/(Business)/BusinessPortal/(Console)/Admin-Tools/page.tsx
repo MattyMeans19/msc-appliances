@@ -25,7 +25,7 @@ export default async function AdminTools(){
             inventory="bg-gray-200"
             tools="bg-gray-400"
         />
-        <div className="m-10 grow border flex flex-col p-5 gap-10">
+        <div className="md:m-10 grow flex flex-col p-2 gap-10">
             <div className="bg-slate-400 p-5 text-2xl w-full text-center rounded-2xl">
                 <h2>Inventory Access - Admin, Manager, Employee</h2>
                 <h2>Create new users- Admin, Manager</h2>

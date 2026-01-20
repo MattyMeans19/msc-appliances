@@ -87,7 +87,6 @@ export async function UpdateSpecial(special: Specials){
         if(currentResponse.current){
             try{
                 await pool.query("UPDATE specials SET current = false WHERE current = true");
-
             }  catch(error){
             console.log(error)
             alert(error)
@@ -98,7 +97,7 @@ export async function UpdateSpecial(special: Specials){
             alert(error)
         }
     try{
-        await pool.query('UPDATE specials SET current = true WHERE name = $1', [newSpecial.name]) 
+        await pool.query('UPDATE specials SET current = true WHERE name = $1', [newSpecial.name]);
     } catch(error){
             console.log(error)
             alert(error)

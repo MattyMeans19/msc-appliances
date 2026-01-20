@@ -1,6 +1,6 @@
 'use client'
 import { GetSubtypes, GetTypes, NewSubtype, NewType } from "@/actions/business/inventory";
-import { useState } from "react"
+import { useState } from "react";
 
 interface ProcductType{
     item: any[]
@@ -17,7 +17,6 @@ export default function InventoryFilter(array: ProcductType){
     const [newType, updateNewType] = useState("");
     const [newSubtype, updateNewSubtype] = useState("");
     const [forType, changeForType] = useState("");
-
 
 
     async function updateSubtypes(type: string){

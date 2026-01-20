@@ -14,8 +14,8 @@
 }
 
 .Table-header{
-  @apply text-2xl bg-slate-400 border;
+  @apply md:text-2xl bg-slate-400 border md:text-center font-bold md:p-5;
 }
 .Table-item{
-  @apply text-center border; 
+  @apply text-center md:text-2xl border; 
 }
