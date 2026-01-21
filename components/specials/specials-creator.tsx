@@ -82,11 +82,12 @@ export default function SpecialsCreator(props: Active){
 
     return(
         <div className="overflow-y-scroll md:overflow-y-clip fixed top-0 left-0 h-screen w-screen bg-gray-800/20 flex flex-col md:flex-row z-10">
-            <div className="flex flex-col justify-around gap-2 md:w-[40vw] md:min-h-[70vh] mx-[5vw] my-15 md:my-[20vh] bg-white p-15 border-5 border-double rounded-3xl">
-                <div className="flex flex-col justify-around gap-5 md:gap-12">
+            <div className="flex flex-col justify-around gap-2 md:w-[40vw] md:min-h-[70vh] mx-[5vw] my-15 md:my-[20vh]
+            text-lg xlg:text-3xl overflow-y-scroll bg-white p-15 border-5 border-double rounded-3xl">
+                <div className="flex flex-col justify-around gap-5 lg:gap-12">
                     <div className=" flex flex-nowrap justify-evenly">
                         <label htmlFor="sale_price">Sale(%):</label>
-                        <input type="number" id="sale_price" className="border-2 w-20 text-3xl text-center" max={100}
+                        <input type="number" id="sale_price" className="border-2 w-20 text-center" max={100}
                         onChange={(e) => UpdateSalePrice(e.target.valueAsNumber)}></input>
                         <BGPhotoUpload 
                         newName={BGChanged}
