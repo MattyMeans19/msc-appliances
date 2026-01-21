@@ -68,7 +68,7 @@ export default function EmployeeRow(employee: Employee){
             </span>
             <span className="Table-item">
                 {editActive ? 
-                <select id="privilege" defaultValue="Employee" onChange={(e) => changeUserInfo(prev => ({ ...prev, privilege: e.target.value}))}>
+                <select id="privilege" defaultValue={editActive ? employee.privilege : "Employee"} onChange={(e) => changeUserInfo(prev => ({ ...prev, privilege: e.target.value}))}>
                     <option value="Employee">Employee</option>
                     <option value="Manger">Manger</option>
                     <option value="Admin">Admin</option>

@@ -6,7 +6,7 @@ export default async function SpecialsSelector(){
     
     return(
         <SpecialsEditor
-            specials = {specials!.specialsResult}
+            specials = {specials!}
 
         />
     )

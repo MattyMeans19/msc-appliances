@@ -59,7 +59,7 @@ export default function InventoryFilter(array: ProcductType){
 
 
     return(
-        <div className="lg:grid grid-cols-4 pb-5 text-3xl ">
+        <div className="lg:grid grid-cols-4 pb-5 lg:text-3xl ">
             <div className="col-span-1 p-5 w-full flex flex-col gap-5">
                 <label htmlFor="types" className="w-full text-center">Types</label>
                 <select className="border w-full" id="types"
@@ -98,13 +98,13 @@ export default function InventoryFilter(array: ProcductType){
                 <span>On Sale <input type="checkbox" onChange={(e) => {toggleOnSale(e.target.checked)}}></input></span>
             </div>
             <div className="col-span-2 col-start-1 row-start-2 w-full place-content-center">
-                <button className="bg-red-500 active:bg-red-700 text-3xl p-2 border-2 rounded-full w-50">Filter</button>    
+                <button className="bg-red-500 active:bg-red-700 lg:text-3xl lg:p-2 border-2 rounded-full w-50">Filter</button>    
             </div> 
             <div className="col-start-3 col-span-2 w-full place-items-center flex flex-col gap-2 border-t mt-5 lg:mt-0 lg:border-t-0">
-                <span className="text-center underline">Tools</span>
+                <span className="text-center text-2xl underline">Tools</span>
                 <input type="text" placeholder="New Type" className="border w-fit text-2xl md:text-3xl"
                     onChange={(e) => {updateNewType(e.target.value)}}></input>
-                <button className="border-2 bg-red-500 w-50 rounded-full self-center" onClick={() => (AddType(newType))}>Add Type</button>
+                <button className="border-2 bg-red-500 active:bg-red-700 w-50 rounded-full self-center" onClick={() => (AddType(newType))}>Add Type</button>
                 <input type="text" placeholder="New Subtype" className="border w-fit text-2xl md:text-3xl"
                     onChange={(e) => {updateNewSubtype(e.target.value)}}></input>
                 <span>FOR</span>
@@ -119,7 +119,7 @@ export default function InventoryFilter(array: ProcductType){
                         </option>
                     ))}
                 </select>                
-                <button className="border-2 bg-red-500 w-50 rounded-full self-center" onClick={() => (AddSubType())}>Add Subtype</button>
+                <button className="border-2 bg-red-500 active:bg-red-700 w-50 rounded-full self-center" onClick={() => (AddSubType())}>Add Subtype</button>
             </div>
         </div>
 

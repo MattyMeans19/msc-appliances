@@ -39,22 +39,23 @@ export type FormState =
   export type Specials = {
     name: string,
     info: string,
-    textColor: string,
-    bgImage: string,
-    current: boolean
+    textcolor: string,
+    bgimage: string,
+    current: boolean,
+    sales_price: number
   }
 
   export type Product = {
-    sku: string,
-    name: string, 
+    id: number,
+    name: string,
     info: string,
-    type: string,
-    subtype:string,
+    sku: number,
     cost: number,
     price: number,
-    count: number,
-    images: string[],
-    fblink: string,
     deliverable: boolean,
-    brand: string
+    on_sale: boolean,
+    count: number,
+    in_store_warranty: number,
+    parts_labor_warranty: number,
+    photos: string[]
   }
