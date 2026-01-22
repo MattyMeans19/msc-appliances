@@ -1,6 +1,7 @@
 'use server';
 
 import pool from "@/lib/db";
+import { NewProduct } from "@/lib/definitions";
 
 export const inventory = async () =>{
     
@@ -56,4 +57,49 @@ export async function NewSubtype(type: string, subtype: string){
         }        
     }
 
+}
+
+export async function AddProduct(product: NewProduct){
+    const { 
+        name, info, sku, cost, price, deliverable, 
+        on_sale, count, in_store_warranty, 
+        parts_labor_warranty, photos 
+    } = product;
+
+    try {
+        const queryText = `
+            INSERT INTO inventory(
+                name, info, sku, cost, price, deliverable, 
+                on_sale, count, in_store_warranty, 
+                parts_labor_warranty, photos
+            ) 
+            VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+        `;
+
+        const values = [
+            name, info, sku, 
+            cost * 100, 
+            price * 100, 
+            deliverable, on_sale, count, 
+            in_store_warranty, parts_labor_warranty, photos
+        ];
+
+        await pool.query(queryText, values);
+        return "New Product Added To Inventory!";
+        
+    } catch (error) {
+        console.error("Database Error:", error);
+        return "Error Adding Product!";
+    }
+}
+
+export async function GetProducts(){
+    try{
+        const productRequest = await pool.query('Select * FROM inventory');
+        let productResults = productRequest.rows;
+        return productResults
+    } catch(error){
+        console.log(error);
+        return "Could't fetch products. Contact the WebMaster!"
+    }
 }

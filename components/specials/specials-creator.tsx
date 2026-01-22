@@ -58,10 +58,14 @@ export default function SpecialsCreator(props: Active){
     }
 
     async function SaveSpecial(){
-        if(special.bgimage != ""){
+        const infoComplete = Object.values(special).every(value => value != "")
+
+        if(infoComplete){
             const newRequest =  await NewSpecial(special);
             alert(newRequest);
             window.location.reload()
+        } else {
+            alert("Please fill in all options")
         }
     }
 
@@ -104,7 +108,7 @@ export default function SpecialsCreator(props: Active){
                      }} placeholder="Enter a description for your special here!"/>
                     <span className="text-end text-sm">{descriptionLength}/100</span>
                     <label htmlFor="TextColor">Text Color:</label>
-                    <input type="color" id="TextColor" name="textColor" className="w-full" onChange={(e) =>updateSpecial(prev =>({...prev, textColor: e.target.value}))}/>
+                    <input type="color" id="TextColor" name="textColor" className="w-full" onChange={(e) =>updateSpecial(prev =>({...prev, textcolor: e.target.value}))}/>
                     <button className="border-2 border-black rounded-2xl text-white bg-red-500 self-end md:self-center p-2 md:p-5 w-fit"
                             onClick={() =>(SaveSpecial())}>
                         Save

@@ -46,16 +46,30 @@ export type FormState =
   }
 
   export type Product = {
-    id: number,
-    name: string,
-    info: string,
-    sku: number,
-    cost: number,
-    price: number,
-    deliverable: boolean,
-    on_sale: boolean,
-    count: number,
-    in_store_warranty: number,
-    parts_labor_warranty: number,
-    photos: string[]
+    id: number;
+    name: string;
+    info: string;
+    sku: string;
+    cost: number;
+    price: number;
+    deliverable: boolean;
+    on_sale: boolean;
+    count: number;
+    in_store_warranty: number;
+    parts_labor_warranty: number;
+    photos: string[];
+  }
+
+    export type NewProduct = {
+    name: string;
+    info: string;
+    sku: string;
+    cost: number;
+    price: number;
+    deliverable: boolean;
+    on_sale: boolean;
+    count: number;
+    in_store_warranty: number;
+    parts_labor_warranty: number;
+    photos: string[];
   }
