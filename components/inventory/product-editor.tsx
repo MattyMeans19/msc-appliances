@@ -50,7 +50,7 @@ export default function ProductEditor(item: Item){
         maximumFractionDigits: 2,
     });
     return(
-        <div className="absolute top-0 left-0 place-self-center w-full h-full p-5 grow basis-full flex flex-col lg:grid grid-cols-4 grid-rows-8 gap-5 bg-slate-200 px-15">
+        <div className="absolute top-0 left-0 place-self-center w-full h-fit p-5 grow basis-full flex flex-col lg:grid grid-cols-4 grid-rows-8 gap-5 bg-slate-200 px-15">
             <button className="text-3xl w-fit absolute top-0 right-0 cursor-pointer"
                 onClick={() => (item.toggle())}>
                 ❌
@@ -124,7 +124,7 @@ export default function ProductEditor(item: Item){
                 />
             </div>
             <button className="col-start-2 row-start-8 col-span-full w-fit place-self-center 
-            border-2 rounded-full px-5 text-3xl bg-red-500 active:bg-red-700 cursor-pointer"
+            border-2 rounded-full px-5 mt-10 text-3xl bg-red-500 active:bg-red-700 cursor-pointer"
                 onClick={() =>(SaveItem())}>
                 Save
                 </button>
