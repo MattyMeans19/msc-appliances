@@ -2,6 +2,8 @@
 interface Warranties{
     in_store: number, 
     parts_labor: number,
+    close: () => void,
+    showSignature: boolean
 }
 
 export default function WarrantyInfo(props: Warranties){
@@ -9,7 +11,10 @@ export default function WarrantyInfo(props: Warranties){
         <div className="h-full p-10">
             <div className="flex flex-nowrap w-full border-b place-content-end gap-20 mb-5">
                 <button className="text-2xl cursor-pointer">🖨️</button>
-                <button className="text-2xl cursor-pointer">❌</button>
+                <button className="text-2xl cursor-pointer"
+                    onClick={() =>(props.close())}>
+                    ❌
+                </button>
             </div>
             <p>
                 <span className="font-bold">{props.parts_labor}</span> day parts & labor warranty ($1.75/mile trip charge applies out of ABQ/Rio Rancho area)<br/>
@@ -103,8 +108,8 @@ export default function WarrantyInfo(props: Warranties){
                     and labor the technician will determine after the initial diagnosis.
                 </li>
             </ul>
-            <p className="font-bold">BY SIGNING BELOW, I CONFIRM I HAVE READ AND AGREED TO ALL RETURN, WARRANTY, AND POLICIES HEREIN.</p>
-            <div className="flex flex-nowrap my-10">
+            <div className={`flex flex-nowrap my-10 ${props.showSignature ? 'visible' : 'hidden'}`}>
+                <p className="font-bold">BY SIGNING BELOW, I CONFIRM I HAVE READ AND AGREED TO ALL RETURN, WARRANTY, AND POLICIES HEREIN.</p>
                 <p className="basis-1/5 text-2xl w-full text-center">Signature:</p>
                 <span className="basis-4/5 border-b"></span>
             </div>

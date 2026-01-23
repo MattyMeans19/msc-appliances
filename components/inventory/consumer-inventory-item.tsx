@@ -13,7 +13,7 @@ interface SelectedProduct{
         price: number,
         on_sale: boolean
 }
-export default function InventoryItem(props: SelectedProduct){
+export default function ConsumerInventoryItem(props: SelectedProduct){
     const product = props;
     const [currentSale, updateCurrentSale] = useState(0)
 
@@ -40,7 +40,7 @@ export default function InventoryItem(props: SelectedProduct){
     return(
         <div className="h-fit relative">
             <p className={`${product.on_sale ? 'visible' : 'hidden'} text-2xl absolute top-[-40] 
-            w-fit px-10 text-white bg-red-500 rounded-full`}>On Sale!</p>
+            w-fit place-self-center px-10 text-white bg-red-500 rounded-full animate-bounce animate-infinite`}>On Sale!</p>
             <h1 className="font-bold text-xl">{product.name}</h1>
             <h2 className="text-center">Sku: {product.sku}</h2>
             <CldImage 

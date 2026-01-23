@@ -11,6 +11,7 @@ interface Item{
 export default function ProductPage(product: Item){
     const item = product.item;
     const [currentImage, changeCurrentImage] = useState(item.photos[0]);
+    const [warrantyVisible, toggleWarranty] = useState(false)
     const salePrice = (((item.price / 100) - (item.price / 100) * (product.sale / 100)));
 
     const formatter = new Intl.NumberFormat('en-US', {
@@ -20,13 +21,13 @@ export default function ProductPage(product: Item){
     });
 
     return(
-        <div className="grow py-5 flex flex-wrap gap-5 lg:grid grid-cols-5 relative">
+        <div className="grow py-5 flex flex-wrap gap-5 lg:grid grid-cols-5 lg:gap-10 relative">
             <div className="col-span-full w-full flex justify-between border-b-5 border-slate-400/25 shadow-lg p-2">
                 <h1 className="lg:text-5xl">{item.name}</h1>
                 <h2 className="lg:h-fit lg:text-3xl">SKU: {item.sku}</h2>  
             </div>
             
-            <div className="row-start-2 col-start-1 col-span-3 flex rounded-3xl shadow-2xl border p-5 lg:ml-5">
+            <div className="row-start-2 col-start-1 col-span-3 max-h-[90vh] w-full flex rounded-3xl shadow-2xl border p-5 lg:ml-5">
                 <div className="basis-1/3 flex flex-col gap-5 place-items-center">
                     {item.photos.map((photo, index) =>(
                         <CldImage 
@@ -41,18 +42,18 @@ export default function ProductPage(product: Item){
                         />
                     ))}
                 </div>
-                <div className="basis-1/2">
+                <div className="basis-2/3">
                     <CldImage 
                         alt="product image"
                         src={currentImage}
                         width={1920}
                         height={1080}
-                        className="size-100 lg:size-200"
+                        className="size-full"
                     />
                 </div>                
             </div>
 
-            <div className="col-start-4 row-start-2 col-span-2 w-full flex flex-col gap-5 p-5 lg:pr-15 h-fit">
+            <div className="col-start-4 row-start-2 col-span-2 w-full flex flex-col gap-5 p-5 lg:pr-15 h-fit rounded-3xl shadow-2xl">
                 <p className="text-2xl">{item.info}</p>
                 <span className="w-full text-end">Stock: {item.count}</span>
                 <span className="w-full place-items-end text-3xl">
@@ -63,15 +64,21 @@ export default function ProductPage(product: Item){
                     {item.parts_labor_warranty} day Parts and Labor Warranty<br/>
                     {item.in_store_warranty} day IN STORE warranty
                 </p>
-                <button className="text-red-500 w-fit cursor-pointer">Warranty and Return Policy</button>
+                <button className="text-red-500 w-fit cursor-pointer"
+                    onClick={() => (toggleWarranty(true))}>
+                    Warranty and Return Policy
+                </button>
+                <button className="bg-red-500 border w-fit p-5 rounded-3xl text-3xl cursor-pointer self-end">Add to cart</button>
             </div>
-            <div className="absolute h-[70vh] bg-white mx-10 overflow-y-scroll p-10 border-10 top-[-300]">
+            <div className={`fixed h-[90vh] mt-10 bg-white mx-10 overflow-y-scroll p-10 border-10 top-0
+                    ${warrantyVisible ? 'visible' : 'hidden'}`}>
                 <WarrantyInfo 
                     parts_labor={item.parts_labor_warranty}
                     in_store={item.in_store_warranty}
+                    close={() => (toggleWarranty(false))}
+                    showSignature= {false}
                 />                
             </div>
-
         </div>
     )
 }
