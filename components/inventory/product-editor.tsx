@@ -50,7 +50,7 @@ export default function ProductEditor(item: Item){
         maximumFractionDigits: 2,
     });
     return(
-        <div className="absolute top-0 left-0 place-self-center w-full grow basis-full flex flex-col lg:grid grid-cols-4 grid-rows-8 gap-5 bg-slate-200 px-15">
+        <div className="absolute top-0 left-0 place-self-center w-full h-full p-5 grow basis-full flex flex-col lg:grid grid-cols-4 grid-rows-8 gap-5 bg-slate-200 px-15">
             <button className="text-3xl w-fit absolute top-0 right-0 cursor-pointer"
                 onClick={() => (item.toggle())}>
                 ❌

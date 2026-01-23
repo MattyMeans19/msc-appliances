@@ -14,6 +14,7 @@ export default function InventoryDisplay(products: List){
     const [newItem, ToggleNew] = useState(false);
     const [list, updateList] = useState(products.products)
     const [editActive, ToggleEdit] = useState(false)
+    
 
 async function Delete(product: Product){
     const deleteRequest = await DeleteProduct(product.sku);
@@ -56,6 +57,7 @@ async function Delete(product: Product){
                         photo={product.photos[product.photos.length - 1]}
                         count={product.count}
                         price={product.price}
+                        on_sale={product.on_sale}
                     />
                     {editActive ? 
                     <ProductEditor 

@@ -143,3 +143,15 @@ export async function ProductUpdate(product: Product){
     }
 
 }
+
+export async function GetProduct(sku: string){
+    try{
+        const product = await pool.query('SELECT * FROM inventory WHERE sku = $1', [sku]);
+        let productResult = product.rows[0];
+        return productResult as Product;
+    } catch(error){
+        console.log(error);
+        let message = error;
+        return message as string;
+    }
+}

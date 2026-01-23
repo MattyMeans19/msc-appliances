@@ -1,5 +1,8 @@
 'use client'
+import { GetSpecial } from "@/actions/business/specials";
+import { Specials } from "@/lib/definitions";
 import { CldImage } from "next-cloudinary";
+import { useEffect, useState } from "react";
 
 
 interface SelectedProduct{
@@ -7,10 +10,25 @@ interface SelectedProduct{
         sku: string,
         photo: string,
         count: number,
-        price: number
+        price: number,
+        on_sale: boolean
 }
 export default function InventoryItem(props: SelectedProduct){
     const product = props;
+    const [currentSale, updateCurrentSale] = useState(0)
+
+    async function GetSale(){
+        let sale = await GetSpecial() as Specials
+        updateCurrentSale(sale.sales_price)
+    }
+
+    useEffect(() => {
+        if(currentSale === 0){
+            GetSale()
+        }
+    }, [currentSale])
+
+    const salePrice = (((product.price / 100) - (product.price / 100) * (currentSale / 100)));
 
     const formatter = new Intl.NumberFormat('en-US', {
         style: 'decimal',
@@ -18,8 +36,11 @@ export default function InventoryItem(props: SelectedProduct){
         maximumFractionDigits: 2,
     });
 
+
     return(
-        <div>
+        <div className="h-fit relative">
+            <p className={`${product.on_sale ? 'visible' : 'hidden'} text-2xl absolute top-[-40] 
+            w-fit place-self-center px-10 text-white bg-red-500 rounded-full animate-bounce animate-infinite`}>On Sale!</p>
             <h1 className="font-bold text-xl">{product.name}</h1>
             <h2 className="text-center">Sku: {product.sku}</h2>
             <CldImage 
@@ -31,9 +52,10 @@ export default function InventoryItem(props: SelectedProduct){
             />
             <div className="flex flex-nowrap justify-between">
                 <h3>stock: {product.count}</h3>
-                <h3>${formatter.format(product.price/100)}</h3>   
+                <h3 className={`${product.on_sale ? 'line-through' : null} decoration-red-500`}>${formatter.format(product.price/100)}</h3>
+                {product.on_sale ? <p className="text-red-500">${formatter.format(salePrice)}</p> : null}
             </div>
-                        
+                  
         </div>
     )
 }
