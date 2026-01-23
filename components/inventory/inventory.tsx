@@ -1,7 +1,10 @@
 'use client'
 import { useState } from "react"
-import ProductEditor from "./product-editor";
 import { Product } from "@/lib/definitions";
+import InventoryItem from "./inventory-item";
+import { DeleteProduct, GetProducts } from "@/actions/business/inventory";
+import ProductAdder from "./product-adder";
+import ProductEditor from "./product-editor";
 
 interface List {
     products: Product[]
@@ -10,10 +13,28 @@ interface List {
 export default function InventoryDisplay(products: List){
     const [newItem, ToggleNew] = useState(false);
     const [list, updateList] = useState(products.products)
+    const [editActive, ToggleEdit] = useState(false)
 
+async function Delete(product: Product){
+    const deleteRequest = await DeleteProduct(product.sku);
+    product.photos.forEach(async(photo) =>{
+            try {
+                await fetch("/api/delete-photo", {
+                method: "POST",
+                body: JSON.stringify({ publicId: photo }),
+            });
+            console.log("Deleted:", photo);
+            const newList = await GetProducts() as Product[];
+            updateList(newList)
+            } catch (err) {
+                console.error("Could not delete old photo", err);
+            }
+    })
+    alert(deleteRequest)
+}
 
     return(
-        <div className="grow max-h-screen w-[80vw] self-center border mx-10 mb-5 flex flex-col gap-10 p-10">
+        <div className="grow h-full w-[80vw] self-center border mx-10 mb-5 flex flex-col gap-10 p-10 relative">
             <div className="grid grid-cols-3 justify-around border-5 border-slate-500/15 rounded-2xl shadow-2xl shadow-slate-500/25 p-5">
                 <label htmlFor="search" className="md:text-3xl w-full">Search by Name or SKU: </label>
                 <input type="text" id="search" placeholder="Search" className="col-span-2 border-2 border-slate-400 rounded-2xl w-full place-self-center p-2"></input>
@@ -22,13 +43,28 @@ export default function InventoryDisplay(products: List){
                     onClick={(() => ToggleNew(true))}>
                 Add Item
             </button>
-            <div className="grow border">
+            <div className="grow border-5 border-double grid grid-cols-4 p-5">
                 {list.map((product) => (
-                    <div key={product.id}>
-                        <h1>{product.name}</h1>
-                        <h2>Sku: {product.sku}</h2>
-                        <h3>Description: {product.info}</h3>
+                    <div key={product.id} className="col-span-1 border-5 border-double border-slate-400 p-2 rounded-2xl flex flex-col">
+                        <div className="place-self-end">
+                            <button className="cursor-pointer" onClick={() => (Delete(product))}>🗑️</button>
+                            <button className="cursor-pointer" onClick={() => (ToggleEdit(true))}>📝</button>
+                        </div>
+                       <InventoryItem 
+                        name={product.name}
+                        sku={product.sku}
+                        photo={product.photos[product.photos.length - 1]}
+                        count={product.count}
+                        price={product.price}
+                    />
+                    {editActive ? 
+                    <ProductEditor 
+                        item = {product}
+                        toggle={() =>(ToggleEdit(false))}
+                    /> :
+                    null}
                     </div>
+                    
                 ))}
             </div>
             <div className={`absolute w-[90vw] h-fit place-self-center top-30 mx-50
@@ -37,7 +73,8 @@ export default function InventoryDisplay(products: List){
                         onClick={() => (ToggleNew(false))}>
                         ❌
                     </button>
-                    <ProductEditor />
+                    <ProductAdder
+                    />
             </div>
         </div>
     )

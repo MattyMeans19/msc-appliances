@@ -2,18 +2,25 @@
 import { useState } from "react";
 
 import InventoryPhotoUpload from "./inventory-image-upload"
-import { Product } from "@/lib/definitions";
+import { NewProduct } from "@/lib/definitions";
 import NewImagePreview from "./image-preview";
-import { ProductUpdate } from "@/actions/business/inventory";
-
-interface Item{
-    item: Product,
-    toggle: Function
-}
+import { AddProduct } from "@/actions/business/inventory";
 
 
-export default function ProductEditor(item: Item){
-    const [product, UpdateProduct] = useState<Product>(item.item)
+export default function ProductAdder(){
+    const [product, UpdateProduct] = useState<NewProduct>({
+        name: "",
+        info: "",
+        sku: "",
+        cost: 0,
+        price: 0,
+        deliverable: false,
+        on_sale: false,
+        count: 0,
+        in_store_warranty: 0,
+        parts_labor_warranty: 0,
+        photos: []
+    })
 
     function AddedPhotos(newImage: string){
         UpdateProduct(prevState => ({
@@ -36,7 +43,7 @@ export default function ProductEditor(item: Item){
     async function SaveItem(){
         const infoComplete = Object.values(product).every(value => value !== "");
         if(infoComplete){
-            const result = await ProductUpdate(product);
+            const result = await AddProduct(product);
             alert(result);
             window.location.reload()
         } else {
@@ -44,61 +51,49 @@ export default function ProductEditor(item: Item){
         }
     }
 
-    const formatter = new Intl.NumberFormat('en-US', {
-        style: 'decimal',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-    });
+
     return(
-        <div className="absolute top-0 left-0 place-self-center w-full grow basis-full flex flex-col lg:grid grid-cols-4 grid-rows-8 gap-5 bg-slate-200 px-15">
-            <button className="text-3xl w-fit absolute top-0 right-0 cursor-pointer"
-                onClick={() => (item.toggle())}>
-                ❌
-            </button>
+        <div className="grow basis-full flex flex-col lg:grid grid-cols-4 grid-rows-8 gap-5 bg-slate-200 px-15">
             <div className="lg:col-span-1 row-span-8 flex flex-col gap-5">
                 <label htmlFor="product_name" className="">Product Name(text limit: 60):</label>
-                <input type="text" id="product_name" maxLength={60} className="border-2 bg-white" defaultValue={product.name}
+                <input type="text" id="product_name" maxLength={60} className="border-2 bg-white"
                     onChange={(e) => (UpdateProduct(prev => ({...prev, name: e.target.value})))}>
                 </input>
                 <label htmlFor="product_sku" className="">Product Sku:</label>
-                <input type="text" id="product_sku" className="border-2 bg-white text-center" defaultValue={product.sku}
+                <input type="text" id="product_sku" className="border-2 bg-white text-center"
                     onChange={(e) => (UpdateProduct(prev => ({...prev, sku: e.target.value})))}>
                 </input>
                 <label htmlFor="product_info" className="">Product Description(text limit: 500):</label>
-                <textarea id="product_info" maxLength={500} className="border-2 bg-white h-80" defaultValue={product.info}
+                <textarea id="product_info" maxLength={500} className="border-2 bg-white h-80"
                     onChange={(e) => (UpdateProduct(prev => ({...prev, info: e.target.value})))}>
                 </textarea>
                 <div className="flex flex-wrap">
                     <label htmlFor="deliverable" className="basis-1/2">Deliverable:</label>
-                    <input type="checkbox" id="deliverable" className="basis-1/2" defaultChecked={product.deliverable}
+                    <input type="checkbox" id="deliverable" className="basis-1/2"
                         onChange={(e) => (UpdateProduct(prev => ({...prev, deliverable: e.target.checked})))}>
                     </input>
                     <label htmlFor="on_sale" className="basis-1/2 mt-5">On Sale:</label>
-                    <input type="checkbox" id="on_sale" className="basis-1/2 mt-5" defaultChecked={product.on_sale}
+                    <input type="checkbox" id="on_sale" className="basis-1/2 mt-5"
                         onChange={(e) => (UpdateProduct(prev => ({...prev, on_sale: e.target.checked})))}>
                     </input>    
                 </div>
                 <label htmlFor="product_cost" className=" self-center">Product Cost:</label>
                 <input type="number" id="product_cost" min={0} className="border-2 w-50 text-center self-center bg-white"
-                        defaultValue={formatter.format(product.cost/100)}
                     onChange={(e) => (UpdateProduct(prev => ({...prev, cost: e.target.valueAsNumber})))}>
                 </input>
                 <label htmlFor="product_price" className=" self-center">Product Price:</label>
                 <input type="number" id="product_price" min={0} className="border-2 w-50 text-center self-center bg-white"
-                        defaultValue={formatter.format(product.price/100)}
                     onChange={(e) => (UpdateProduct(prev => ({...prev, price: e.target.valueAsNumber})))}>
                 </input>
             </div>
             <div className="col-start-2 col-span-full h-fit place-content-center flex flex-col lg:flex-row lg:flex-nowrap">
                 <label htmlFor="in_store_warranty" className="mr-5">In Store Warranty:</label>
                 <input type="number" id="in_store_warranty" min={0} className="border-2 w-15 text-center bg-white"
-                        defaultValue={product.in_store_warranty}
                     onChange={(e) => (UpdateProduct(prev => ({...prev, in_store_warranty: e.target.valueAsNumber})))}>
                 </input>
                 <span className="font-bold">Days</span>
                 <label htmlFor="parts_labor_warranty" className="mx-5">Parts and Labor Warranty:</label>
                 <input type="number" id="parts_labor_warranty" min={0} className="border-2 w-15 text-center bg-white"
-                        defaultValue={product.parts_labor_warranty}
                     onChange={(e) => (UpdateProduct(prev => ({...prev, parts_labor_warranty: e.target.valueAsNumber})))}>
                 </input>
                 <span className="font-bold">Days</span>
@@ -106,7 +101,6 @@ export default function ProductEditor(item: Item){
             <div className="row-start-2 col-start-3 w-ful">
                 <label htmlFor="count" className="">Stock Amount:</label>
                 <input type="number" id="count" min={0} className="border-2 w-50 text-center  bg-white"
-                        defaultValue={product.count}
                     onChange={(e) => (UpdateProduct(prev => ({...prev, count: e.target.valueAsNumber})))}>
                 </input>
             </div>

@@ -1,7 +1,7 @@
 'use server';
 
 import pool from "@/lib/db";
-import { NewProduct } from "@/lib/definitions";
+import { NewProduct, Product } from "@/lib/definitions";
 
 export const inventory = async () =>{
     
@@ -102,4 +102,44 @@ export async function GetProducts(){
         console.log(error);
         return "Could't fetch products. Contact the WebMaster!"
     }
+}
+
+export async function DeleteProduct(product: string){
+    try{
+        const deleteRequest = await pool.query('DELETE from inventory WHERE sku = $1', [product]);
+        return "Item Deleted From Inventory";
+    } catch(error){
+        console.log(error);
+        return "Error deleteing item from inventory!"
+    }
+}
+
+export async function ProductUpdate(product: Product){
+    let current;
+    try{
+        const check = await pool.query('SELECT * FROM inventory WHERE id = $1', [product.id])
+        current = check.rowCount;
+    }catch(error){
+        console.log(error)
+        return("ID doesn't exist!")
+    }
+    if(current === 1){
+        try {
+            await pool.query(`UPDATE inventory
+                SET name = $1, info = $2, sku = $3, cost = $4, price = $5,
+                deliverable = $6, on_sale = $7, count = $8,
+                in_store_warranty = $9, parts_labor_warranty = $10, photos = $11
+                WHERE id = $12`,
+            [product.name, product.info, product.sku, product.cost, product.price,
+                product.deliverable, product.on_sale, product.count, product.in_store_warranty, 
+                product.parts_labor_warranty, product.photos, product.id
+            ])
+            return "Product Updated!";
+            
+        } catch (error) {
+            console.error("Database Error:", error);
+            return "Error Adding Product!";
+        }        
+    }
+
 }
