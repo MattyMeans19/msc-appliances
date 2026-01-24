@@ -28,10 +28,11 @@ export default function NewImagePreview(image: Image){
             </button>
             <CldImage 
                 alt="product image"
-                height={1000}
-                width={1000}
-                crop="scale"
+                height={1920}
+                width={1080}
+                crop="fit"
                 src={image.source}
+                className="size-15 lg:size-25 cursor-pointer"
             />
         </div>
     )

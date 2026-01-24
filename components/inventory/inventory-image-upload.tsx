@@ -28,7 +28,7 @@ export default function InventoryPhotoUpload(props: Props) {
     props.addPhotos(publicId)
   }
 }}
-className='row-start-5 col-span-full rounded-full p-2 bg-red-500 border-2 w-fit place-self-center'
+className='rounded-full p-2 bg-red-500 border-2 w-full place-self-center'
 >
     Upload Photos
 </CldUploadButton>

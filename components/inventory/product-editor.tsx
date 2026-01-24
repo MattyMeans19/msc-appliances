@@ -1,6 +1,6 @@
 'use client'
 import { useState } from "react";
-
+import { CldImage } from "next-cloudinary"
 import InventoryPhotoUpload from "./inventory-image-upload"
 import { Product } from "@/lib/definitions";
 import NewImagePreview from "./image-preview";
@@ -50,70 +50,97 @@ export default function ProductEditor(item: Item){
         maximumFractionDigits: 2,
     });
     return(
-        <div className="fixed top-0 left-0 place-self-center w-full h-full p-5 grow basis-full flex flex-col
-            gap-5 bg-slate-200 lg:px-15 border-5 border-double border-slate-600 overflow-y-scroll">
+        <div className="fixed top-0 left-0 place-self-center w-full h-full p-5 grow basis-full
+        py-5 flex flex-wrap gap-5 lg:grid grid-cols-5 lg:gap-10 bg-slate-200 border-5 border-double border-slate-600 overflow-y-scroll">
             <button className="text-3xl text-end w-fit absolute top-0 right-0 cursor-pointer"
                 onClick={() => (item.toggle())}>
                 ❌
             </button>
-            <div className="h-full flex flex-col gap-5 md:grid grid-cols-3">
+            <div className="col-span-full w-full flex justify-between border-b-5 h-fit">
                 <label htmlFor="product_name" className="col-start-1 text-center place-content-end">Product Name(text limit: 60):</label>
-                <textarea id="product_name" maxLength={60} className="border p-5 bg-white row-start-2 text-2xl" defaultValue={product.name}
+                <textarea id="product_name" maxLength={60} className="border p-5 bg-white w-full text-2xl" defaultValue={product.name}
                     onChange={(e) => (UpdateProduct(prev => ({...prev, name: e.target.value})))}>
                 </textarea>
+                <label htmlFor="product_sku" className="text-center place-self-end text-2xl">Product Sku:</label>
+                <input type="text" id="product_sku" className="border place-self-end bg-white text-center" defaultValue={product.sku}
+                        onChange={(e) => (UpdateProduct(prev => ({...prev, sku: e.target.value})))}>
+                </input>   
+            </div>
+
+            <div className="row-start-2 col-start-1 col-span-3 w-full flex flex-wrap rounded-3xl shadow-2xl border p-5 lg:ml-5">
+                <h1 className="basis-full w-full text-3xl text-center underline">Photos:</h1>
+                <div className="basis-1/3 flex flex-col gap-5 place-items-center">
+                    {product.photos.map((photo, index) =>(
+                        <NewImagePreview 
+                            key={index}
+                            source={photo}
+                            remove_photo={RemovePhotos}
+                        />
+                    ))}                    
+                </div>
+                <div className="basis-2/3">
+                    <p>Thumbnail/Main Photo</p>
+                  <CldImage 
+                    alt="product image"
+                    src={product.photos[0]}
+                    width={1920}
+                    height={1080}
+                    className="size-full"
+                />    
+                </div>
+               <div className="mt-10 basis-full place-items-center">
+                    <InventoryPhotoUpload 
+                        addPhotos={AddedPhotos}
+                    />
+               </div>
+                
+            </div>
+
+            <div className="col-start-4 row-start-2 col-span-2 w-full flex flex-col gap-5 p-5 lg:pr-15 h-full rounded-3xl shadow-2xl">
                 <label htmlFor="product_info" className="text-center place-content-end">Product Description(text limit: 500):</label>
-                <textarea id="product_info" maxLength={500} className="border-2 bg-white col-start-2 row-start-2h-full" defaultValue={product.info}
+                <textarea id="product_info" maxLength={500} className="grow border-2 bg-white col-start-2 row-start-2 h-full text-2xl" defaultValue={product.info}
                     onChange={(e) => (UpdateProduct(prev => ({...prev, info: e.target.value})))}>
                 </textarea>
-                <div className="w- h-full flex flex-nowrap">
-                    <label htmlFor="product_sku" className="text-center text-2xl">Product Sku:</label>
-                    <input type="text" id="product_sku" className="border place-self-start bg-white text-center" defaultValue={product.sku}
-                            onChange={(e) => (UpdateProduct(prev => ({...prev, sku: e.target.value})))}>
-                    </input>   
-                </div>
-
-            </div>
-            <div className="">
-                <div className="flex flex-col justify-center">
-                    <label htmlFor="deliverable" className="basis-1/2">Deliverable:</label>
-                    <input type="checkbox" id="deliverable" className="basis-1/2" defaultChecked={product.deliverable}
+                <div className="flex flex-col">
+                    <label htmlFor="deliverable" className="basis-1/2 h-full self-center">Deliverable:</label>
+                    <input type="checkbox" id="deliverable" className="basis-1/2 h-full self-center" defaultChecked={product.deliverable}
                         onChange={(e) => (UpdateProduct(prev => ({...prev, deliverable: e.target.checked})))}>
                     </input>
-                    <label htmlFor="on_sale" className="basis-1/2 mt-5">On Sale:</label>
-                    <input type="checkbox" id="on_sale" className="basis-1/2 mt-5" defaultChecked={product.on_sale}
+                    <label htmlFor="on_sale" className="basis-1/2 mt-5 h-full self-center">On Sale:</label>
+                    <input type="checkbox" id="on_sale" className="basis-1/2 h-full self-center" defaultChecked={product.on_sale}
                         onChange={(e) => (UpdateProduct(prev => ({...prev, on_sale: e.target.checked})))}>
                     </input>
                 </div>
-                <label htmlFor="manual_sale" className="mt-10">Unique Sale Price (Will override current Specials % sale):</label>
-                <input type="number" id="manual_sale" className="w-fit border bg-white text-center"
-                        defaultValue={(product.manual_sale/100)}
-                    onChange={(e) => (UpdateProduct(prev => ({...prev, manual_sale: (e.target.valueAsNumber * 100)})))}>
-                </input>
-                <label htmlFor="product_cost" className="text-2xl basis-1/4">Product Cost:</label>
-                <input type="number" id="product_cost" min={0} className="border-2 w-50 text-center h-fit bg-white"
-                        defaultValue={(product.cost/100)}
-                    onChange={(e) => (UpdateProduct(prev => ({...prev, cost: (e.target.valueAsNumber * 100)})))}>
-                </input>
-                <label htmlFor="product_price" className="text-2xl basis-1/4">Product Price:</label>
-                <input type="number" id="product_price" min={0} className="border-2 w-50 text-center h-fit bg-white"
-                        defaultValue={(product.price/100)}
-                    onChange={(e) => (UpdateProduct(prev => ({...prev, price: (e.target.valueAsNumber * 100)})))}>
-                </input>
+                <div className="flex flex-col md:grid grid-cols-2 gap-2">
+                    <label htmlFor="manual_sale" className="mt-10">Unique Sale Price (Will override current Specials % sale):</label>
+                    <input type="number" id="manual_sale" className="w-fit h-fit self-center border bg-white text-center col-start-2"
+                            defaultValue={(product.manual_sale/100)}
+                        onChange={(e) => (UpdateProduct(prev => ({...prev, manual_sale: (e.target.valueAsNumber * 100)})))}>
+                    </input>
+                    <label htmlFor="product_cost" className="text-2xl basis-1/4">Product Cost:</label>
+                    <input type="number" id="product_cost" min={0} className="border-2 w-50 text-center h-fit bg-white col-start-2"
+                            defaultValue={(product.cost/100)}
+                        onChange={(e) => (UpdateProduct(prev => ({...prev, cost: (e.target.valueAsNumber * 100)})))}>
+                    </input>
+                    <label htmlFor="product_price" className="text-2xl basis-1/4">Product Price:</label>
+                    <input type="number" id="product_price" min={0} className="border-2 w-50 text-center h-fit bg-white col-start-2"
+                            defaultValue={(product.price/100)}
+                        onChange={(e) => (UpdateProduct(prev => ({...prev, price: (e.target.valueAsNumber * 100)})))}>
+                    </input>
+                    <label htmlFor="in_store_warranty" className="text-2xl basis-1/4">In Store Warranty(days)</label>
+                    <input type="number" id="in_store_warranty" min={0} className="border-2 w-50 text-center h-fit bg-white col-start-2 self-end"
+                            defaultValue={(product.in_store_warranty)}
+                        onChange={(e) => (UpdateProduct(prev => ({...prev, in_store_warranty: e.target.valueAsNumber})))}>
+                    </input>
+                    <label htmlFor="parts_labor_warranty" className="text-2xl basis-1/4">Parts and Labor Warranty(days)</label>
+                    <input type="number" id="parts_laborwarranty" min={0} className="border-2 w-50 text-center h-fit bg-white col-start-2 self-end"
+                            defaultValue={(product.parts_labor_warranty)}
+                        onChange={(e) => (UpdateProduct(prev => ({...prev, parts_labor_warranty: e.target.valueAsNumber})))}>
+                    </input>             
+                </div>
+
             </div>
-            <div className="border-5 border-double grid grid-cols-4 gap-5 lg:overflow-y-scroll p-5">
-                <h1 className="col-span-full text-3xl text-center underline">Photos:</h1>
-                {product.photos.map((photo, index) =>(
-                    <NewImagePreview 
-                        key={index}
-                        source={photo}
-                        remove_photo={RemovePhotos}
-                    />
-                ))}
-                <InventoryPhotoUpload 
-                    addPhotos={AddedPhotos}
-                />
-            </div>
-            <button className="w-fit place-self-center 
+            <button className="w-full place-self-center col-start-3
             border-2 rounded-full px-5 mt-10 text-3xl bg-red-500 active:bg-red-700 cursor-pointer"
                 onClick={() =>(SaveItem())}>
                 Save
