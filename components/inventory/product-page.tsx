@@ -27,7 +27,7 @@ export default function ProductPage(product: Item){
                 <h2 className="lg:h-fit lg:text-3xl">SKU: {item.sku}</h2>  
             </div>
             
-            <div className="row-start-2 col-start-1 col-span-3 max-h-[90vh] w-full flex rounded-3xl shadow-2xl border p-5 lg:ml-5">
+            <div className="row-start-2 col-start-1 col-span-3 w-full flex rounded-3xl shadow-2xl border p-5 lg:ml-5">
                 <div className="basis-1/3 flex flex-col gap-5 place-items-center">
                     {item.photos.map((photo, index) =>(
                         <CldImage 

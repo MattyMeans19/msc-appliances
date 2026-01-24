@@ -59,53 +59,59 @@ export default function InventoryFilter(array: ProcductType){
 
 
     return(
-        <div className="lg:grid grid-cols-4 pb-5 lg:text-3xl ">
-            <div className="col-span-1 p-5 w-full flex flex-col gap-5">
-                <label htmlFor="types" className="w-full text-center">Types</label>
-                <select className="border w-full" id="types"
-                onChange={(e) => {
-                    changeType(e.target.value);
-                    updateSubtypes(e.target.value);
-                }}>
-                    <option value="*">All</option>
-                    {typeList.map((type) => (
-                        <option key={type.id} value={type.name}>
-                            {type.name}
-                        </option>
-                    ))}
-                </select>
+        <div className="flex flex-col md:flex-row lg:text-2xl gap-20">
+            <div className="border-10 border-double border-slate-500 w-full md:basis-3/5 lg:basis-2/3 md:grid grid-cols-3 p-2">
+                <span className="text-3xl underline col-span-full text-ceneter row-start-1">Inventory Filters</span>
+                <div className="col-span-2 row-start-2 p-5 w-full flex flex-col gap-5">
+                    <label htmlFor="types" className="w-full text-center">Types</label>
+                    <select className="border w-full" id="types"
+                    onChange={(e) => {
+                        changeType(e.target.value);
+                        updateSubtypes(e.target.value);
+                    }}>
+                        <option value="*">All</option>
+                        {typeList.map((type) => (
+                            <option key={type.id} value={type.name}>
+                                {type.name}
+                            </option>
+                        ))}
+                    </select>
 
-                {subtypes ?
-                    <div className="flex flex-col w-full gap-5">
-                        <label htmlFor="subtypes" className="w-full text-center">Subtypes</label>
-                        <select className="border w-full" id="subtypes" defaultValue="All"
-                        onChange={(e) => {
-                            changeSelectedSub(e.target.value);
-                        }}>
-                            <option value="*">All</option>
-                            {subtypes.map((type: any, index: number) => (
-                                <option key={index} value={type}>
-                                    {type}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    : null
-                }
-            </div> 
-            <div className="col-span-1 col-start-2 flex flex-col justify-around place-items-center">
-                <span>Deliverable <input type="checkbox" onChange={(e) => {toggleDeliverable(e.target.checked)}}></input></span>
-                <span>On Sale <input type="checkbox" onChange={(e) => {toggleOnSale(e.target.checked)}}></input></span>
+                    {subtypes ?
+                        <div className="flex flex-col w-full gap-5">
+                            <label htmlFor="subtypes" className="w-full text-center">Subtypes</label>
+                            <select className="border w-full" id="subtypes" defaultValue="All"
+                            onChange={(e) => {
+                                changeSelectedSub(e.target.value);
+                            }}>
+                                <option value="*">All</option>
+                                {subtypes.map((type: any, index: number) => (
+                                    <option key={index} value={type}>
+                                        {type}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        : null
+                    }
+                </div> 
+                <div className="col-start-3 col-span-1 w-full h-full row-start-2 flex flex-col justify-around place-items-center">
+                    <span className="w-full">Deliverable <input type="checkbox" onChange={(e) => {toggleDeliverable(e.target.checked)}}></input></span>
+                    <span className="w-full">On Sale <input type="checkbox" onChange={(e) => {toggleOnSale(e.target.checked)}}></input></span>
+                </div>
+                <button className="bg-red-500 active:bg-red-700 lg:text-3xl lg:p-2 border-2 rounded-full
+                col-span-1 col-start-2 row-start-3 w-full">
+                    Filter
+                </button>     
             </div>
-            <div className="col-span-2 col-start-1 row-start-2 w-full place-content-center">
-                <button className="bg-red-500 active:bg-red-700 lg:text-3xl lg:p-2 border-2 rounded-full w-50">Filter</button>    
-            </div> 
-            <div className="col-start-3 col-span-2 w-full place-items-center flex flex-col gap-2 border-t mt-5 lg:mt-0 lg:border-t-0">
-                <span className="text-center text-2xl underline">Tools</span>
-                <input type="text" placeholder="New Type" className="border w-fit text-2xl md:text-3xl"
+            
+            <div className="basis-1/5 lg:basis-1/3 w-full h-full place-items-center flex flex-col p-2 gap-2 border-10 border-double border-slate-500 mt-5 md:mt-0">
+                <span className="text-center text-3xl underline">Tools</span>
+                <input type="text" placeholder="New Type" className="border w-fit text-2xl lg::text-3xl"
                     onChange={(e) => {updateNewType(e.target.value)}}></input>
                 <button className="border-2 bg-red-500 active:bg-red-700 w-50 rounded-full self-center" onClick={() => (AddType(newType))}>Add Type</button>
-                <input type="text" placeholder="New Subtype" className="border w-fit text-2xl md:text-3xl"
+                <span className="w-full border-b"></span>
+                <input type="text" placeholder="New Subtype" className="border w-fit text-2xl lg::text-3xl"
                     onChange={(e) => {updateNewSubtype(e.target.value)}}></input>
                 <span>FOR</span>
                 <select className="border lg:w-85" id="edit-types"

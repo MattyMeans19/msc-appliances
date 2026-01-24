@@ -18,6 +18,7 @@ export default async function ProductList() {
                         count={product.count}
                         price={product.price}
                         on_sale={product.on_sale}
+                        manual_sale={product.manual_sale}
                     />  
                 </Link>
             ))}

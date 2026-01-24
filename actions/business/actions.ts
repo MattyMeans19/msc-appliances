@@ -6,8 +6,7 @@ import { FormState, NewUser } from "@/lib/definitions";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { redirect } from "next/navigation";
 import { createSession, deleteSession } from "@/lib/session";
-import { cookies } from "next/headers";
-import {decrypt} from "@/lib/session";
+
 
 export async function Login(formState: FormState, formData: FormData){
     let userName = formData.get("username") as string;

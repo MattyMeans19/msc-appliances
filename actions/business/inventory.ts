@@ -63,7 +63,7 @@ export async function AddProduct(product: NewProduct){
     const { 
         name, info, sku, cost, price, deliverable, 
         on_sale, count, in_store_warranty, 
-        parts_labor_warranty, photos 
+        parts_labor_warranty, photos, manual_sale
     } = product;
 
     try {
@@ -71,9 +71,9 @@ export async function AddProduct(product: NewProduct){
             INSERT INTO inventory(
                 name, info, sku, cost, price, deliverable, 
                 on_sale, count, in_store_warranty, 
-                parts_labor_warranty, photos
+                parts_labor_warranty, photos, manual_sale
             ) 
-            VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+            VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
         `;
 
         const values = [
@@ -81,7 +81,8 @@ export async function AddProduct(product: NewProduct){
             cost * 100, 
             price * 100, 
             deliverable, on_sale, count, 
-            in_store_warranty, parts_labor_warranty, photos
+            in_store_warranty, parts_labor_warranty, photos, 
+            manual_sale * 100
         ];
 
         await pool.query(queryText, values);
@@ -106,7 +107,7 @@ export async function GetProducts(){
 
 export async function DeleteProduct(product: string){
     try{
-        const deleteRequest = await pool.query('DELETE from inventory WHERE sku = $1', [product]);
+        await pool.query('DELETE from inventory WHERE sku = $1', [product]);
         return "Item Deleted From Inventory";
     } catch(error){
         console.log(error);
@@ -124,15 +125,16 @@ export async function ProductUpdate(product: Product){
         return("ID doesn't exist!")
     }
     if(current === 1){
+        console.log(product.cost, product.price, product.manual_sale)
         try {
             await pool.query(`UPDATE inventory
                 SET name = $1, info = $2, sku = $3, cost = $4, price = $5,
                 deliverable = $6, on_sale = $7, count = $8,
-                in_store_warranty = $9, parts_labor_warranty = $10, photos = $11
-                WHERE id = $12`,
-            [product.name, product.info, product.sku, product.cost, product.price,
+                in_store_warranty = $9, parts_labor_warranty = $10, photos = $11, manual_sale = $12
+                WHERE id = $13`,
+            [product.name, product.info, product.sku, product.cost , product.price,
                 product.deliverable, product.on_sale, product.count, product.in_store_warranty, 
-                product.parts_labor_warranty, product.photos, product.id
+                product.parts_labor_warranty, product.photos, product.manual_sale, product.id
             ])
             return "Product Updated!";
             

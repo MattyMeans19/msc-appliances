@@ -31,8 +31,7 @@ export default async function Inventory(){
             inventory="bg-gray-400"
             tools="bg-gray-200"
         />
-        <div className="border-10 border-double border-slate-500 mx-5 md:mx-10 p-15 text-center place-content-center">
-            <span className="text-3xl underline">Inventory Filter</span>
+        <div className="mx-5 md:mx-10 p-5 text-center place-content-center">
             <InventoryFilter 
                 item={productTypes!}
             />

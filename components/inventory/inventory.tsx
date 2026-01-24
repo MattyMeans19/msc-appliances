@@ -35,7 +35,7 @@ async function Delete(product: Product){
 }
 
     return(
-        <div className="grow h-full w-[80vw] self-center border mx-10 mb-5 flex flex-col gap-10 p-10 relative">
+        <div className="grow h-full w-[80vw] self-center border mx-10 mb-5 flex flex-col gap-10 lg:p-10">
             <div className="grid grid-cols-3 justify-around border-5 border-slate-500/15 rounded-2xl shadow-2xl shadow-slate-500/25 p-5">
                 <label htmlFor="search" className="md:text-3xl w-full">Search by Name or SKU: </label>
                 <input type="text" id="search" placeholder="Search" className="col-span-2 border-2 border-slate-400 rounded-2xl w-full place-self-center p-2"></input>
@@ -44,7 +44,7 @@ async function Delete(product: Product){
                     onClick={(() => ToggleNew(true))}>
                 Add Item
             </button>
-            <div className="grow border-5 border-double grid grid-cols-4 p-5">
+            <div className="grow border-5 border-double flex flex-col md:grid md:grid-cols-3 lg:grid-cols-4 p-5 gap-5">
                 {list.map((product) => (
                     <div key={product.id} className="col-span-1 border-5 border-double border-slate-400 p-2 rounded-2xl flex flex-col">
                         <div className="place-self-end">
@@ -58,6 +58,7 @@ async function Delete(product: Product){
                         count={product.count}
                         price={product.price}
                         on_sale={product.on_sale}
+                        manual_sale={product.manual_sale}
                     />
                     {editActive ? 
                     <ProductEditor 
@@ -69,8 +70,8 @@ async function Delete(product: Product){
                     
                 ))}
             </div>
-            <div className={`absolute w-[90vw] h-fit place-self-center top-30 mx-50
-                border-5 border-double border-slate-600 bg-white ${newItem ? 'visible' : 'hidden'} flex flex-col`}>
+            <div className={`fixed w-full h-full place-self-center top-0 mx-50
+                border-5 border-double border-slate-600 bg-slate-200 ${newItem ? 'visible' : 'hidden'} flex flex-col`}>
                     <button className="text-3xl w-fit place-self-end cursor-pointer"
                         onClick={() => (ToggleNew(false))}>
                         ❌

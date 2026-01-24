@@ -1,7 +1,7 @@
 
 export default function ProductLoading(){
     return(
-<div className="w-full h-full inline-flex items-center content-center gap-3">
+<div className="w-full h-full flex flex-row justify-around place-content-center place-items-center">
   <svg className="size-6 animate-spin text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
 
