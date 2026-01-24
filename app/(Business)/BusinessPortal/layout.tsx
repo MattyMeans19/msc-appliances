@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MSC Appliances",
-  description: "The best source for used, reconditioned Appliance sales in the Albuquerque Metro and Rio Rancho area. Locally owned and operated.",
+  title: "MSC Appliances -Business Portal",
+  description: "Portal for Internal Business use Only!",
 };
 
 export default function RootLayout({
