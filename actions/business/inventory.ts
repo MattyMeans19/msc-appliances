@@ -94,7 +94,35 @@ export async function AddProduct(product: NewProduct){
     }
 }
 
-export async function GetProducts(){
+export async function GetProducts(page: number = 1, limit: number = 12) {
+    try {
+        // 1. Calculate the offset (how many items to skip)
+        const offset = (page - 1) * limit;
+
+        // 2. Fetch the limited rows and the total count in one go (or two queries)
+        // We use ORDER BY id DESC so new items appear first
+        const productRequest = await pool.query(
+            'SELECT *, count(*) OVER() AS total_count FROM inventory ORDER BY id DESC LIMIT $1 OFFSET $2',
+            [limit, offset]
+        );
+
+        const productResults = productRequest.rows;
+        
+        // The total_count will be the same on every row thanks to OVER()
+        const totalCount = productResults.length > 0 ? parseInt(productResults[0].total_count) : 0;
+
+        return {
+            products: productResults,
+            totalPages: Math.ceil(totalCount / limit),
+            currentPage: page
+        };
+    } catch (error) {
+        console.log(error);
+        return { error: "Couldn't fetch products. Contact the WebMaster!" };
+    }
+}
+
+export async function GetAllProducts(){
     try{
         const productRequest = await pool.query('Select * FROM inventory');
         let productResults = productRequest.rows;

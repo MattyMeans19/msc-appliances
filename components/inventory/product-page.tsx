@@ -27,8 +27,8 @@ export default function ProductPage(product: Item){
                 <h2 className="lg:h-fit lg:text-3xl">SKU: {item.sku}</h2>  
             </div>
             
-            <div className="row-start-2 col-start-1 col-span-3 w-full flex rounded-3xl shadow-2xl border p-5 lg:ml-5">
-                <div className="basis-1/3 flex flex-col gap-5 place-items-center">
+            <div className="row-start-2 col-start-1 col-span-3 w-full h-[70vh] flex rounded-3xl shadow-2xl border p-5 lg:ml-5">
+                <div className="basis-1/3 flex flex-col gap-5 place-items-center overflow-y-scroll">
                     {item.photos.map((photo, index) =>(
                         <CldImage 
                             alt="product image"
@@ -48,12 +48,17 @@ export default function ProductPage(product: Item){
                         src={currentImage}
                         width={1920}
                         height={1080}
-                        className="size-full"
+                        crop="fit"
+                        className="h-full"
                     />
                 </div>                
             </div>
-
-            <div className="col-start-4 row-start-2 col-span-2 w-full flex flex-col gap-5 p-5 lg:pr-15 h-fit rounded-3xl shadow-2xl">
+            <div className="col-start-4 row-start-2 place-self-center col-span-2 w-full flex flex-col gap-5 p-5 lg:pr-15 h-fit rounded-3xl shadow-2xl">
+                <div className="flex flex-nowrap justify-around text-center">
+                    <h2>Category: <p className="font-bold">{item.type}</p></h2>
+                    <h2>SubCategory: <p className="font-bold">{item.subtype}</p></h2>    
+                </div>
+                
                 <p className="text-2xl">{item.info}</p>
                 <span className="w-full text-end">Stock: {item.count}</span>
                 <span className="w-full place-items-end text-3xl">

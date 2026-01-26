@@ -2,7 +2,10 @@
 import { GetSpecial } from "@/actions/business/specials";
 import { Specials } from "@/lib/definitions";
 import { CldImage } from "next-cloudinary";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import CardLoading from "../Loading/card-image-loading";
+
+
 
 
 interface SelectedProduct{
@@ -34,7 +37,6 @@ export default function ConsumerInventoryItem(props: SelectedProduct){
                 GetSale();
                 updatePrice(salePrice)
             }
-            console.log(currentPrice)
         }
     }, [currentSale, product, currentPrice])
 
@@ -46,24 +48,52 @@ export default function ConsumerInventoryItem(props: SelectedProduct){
 
 
     return(
-        <div className="col-span-1 h-full relative">
-            <p className={`${product.on_sale ? 'visible' : 'hidden'} text-2xl absolute top-[-40] 
-            w-full h-full px-10 text-white bg-red-500 rounded-full animate-bounce animate-infinite`}>On Sale!</p>
-            <h1 className="font-bold lg:text-xl">{product.name}</h1>
-            <h2 className="text-center">Sku: {product.sku}</h2>
+       <div className="col-span-1 h-full relative flex flex-col">
+    {/* Sale Badge - Adjusted positioning to not break layout */}
+    {product.on_sale && (
+        <p className="absolute -top-4 left-1/2 -translate-x-1/2 z-10 px-4 py-1 text-sm font-bold text-white bg-red-500 rounded-full animate-bounce">
+            On Sale!
+        </p>
+    )}
+
+    {/* 1. Fixed Title Slot */}
+    <div className="h-15 mb-2 flex items-center justify-center"> 
+        <h1 className="font-bold lg:text-lg text-center line-clamp-2 leading-tight">
+            {product.name}
+        </h1>
+    </div>
+
+    {/* Sku Section */}
+    <h2 className="text-center text-sm text-gray-500 mb-3">Sku: {product.sku?.toString().replace(/\.0$/, '')}</h2>
+
+    {/* 2. Aspect-Ratio Locked Image */}
+    <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-gray-100 mb-4">
+        <CardLoading />
             <CldImage 
-                alt="product image"
-                width={500}
-                height={500}
+                alt={product.name}
+                fill // Use fill with relative parent for better responsiveness
                 src={product.photo}
-                crop="fill"
-            />
-            <h3>stock: {product.count}</h3>
-            <div className="flex flex-col justify-between w-full text-end mt-auto">
-                <h3 className={`${product.on_sale ? 'line-through' : null} decoration-red-500`}>${formatter.format(product.price/100)}</h3>
-                {product.on_sale ? <p className="text-red-500">${formatter.format(currentPrice)}</p> : null}
-            </div>
-                  
+                crop="fit"
+                className="object-cover"
+            />            
+
+    </div>
+
+    {/* 3. Bottom Alignment */}
+    <div className="mt-auto pt-2">
+        <h3 className="text-sm font-medium text-center">{product.count} in stock</h3>
+        
+        <div className="flex flex-row justify-center items-center mt-2 border-t pt-2">
+            <h3 className={`${product.on_sale ? 'line-through text-gray-400 text-xs' : 'font-bold'} decoration-red-500`}>
+                ${formatter.format(product.price/100)}
+            </h3>
+            {product.on_sale && (
+                <p className="text-red-600 font-bold text-lg">
+                    ${formatter.format(currentPrice)}
+                </p>
+            )}
         </div>
+    </div>
+</div>
     )
 }

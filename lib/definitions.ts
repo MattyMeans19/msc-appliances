@@ -58,7 +58,9 @@ export type FormState =
     in_store_warranty: number;
     parts_labor_warranty: number;
     photos: string[];
-    manual_sale: number
+    manual_sale: number,
+    type: string,
+    subtype:string
   }
 
     export type NewProduct = {
@@ -73,5 +75,7 @@ export type FormState =
     in_store_warranty: number;
     parts_labor_warranty: number;
     photos: string[];
-    manual_sale: number
+    manual_sale: number,
+    type: string,
+    subtype:string
   }

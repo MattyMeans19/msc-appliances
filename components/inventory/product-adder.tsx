@@ -4,10 +4,13 @@ import { CldImage } from "next-cloudinary"
 import InventoryPhotoUpload from "./inventory-image-upload"
 import { NewProduct } from "@/lib/definitions";
 import NewImagePreview from "./image-preview";
-import { AddProduct } from "@/actions/business/inventory";
+import { AddProduct, GetSubtypes } from "@/actions/business/inventory";
 
+interface ProductTypes{
+    types: any[]
+}
 
-export default function ProductAdder(){
+export default function ProductAdder(types: ProductTypes){
     const [product, UpdateProduct] = useState<NewProduct>({
         name: "",
         info: "",
@@ -20,8 +23,22 @@ export default function ProductAdder(){
         in_store_warranty: 0,
         parts_labor_warranty: 0,
         photos: [],
-        manual_sale: 0
+        manual_sale: 0,
+        type: "",
+        subtype: ""
     })
+    const [typeList] = useState(types.types)
+
+    const [subtypes, changeSubTypes]: any = useState ([]);
+    async function updateSubtypes(type: string){
+        if(type != "*"){
+            const subs = await GetSubtypes(type);
+            changeSubTypes(subs);
+        }  else {
+            changeSubTypes([]);
+        }
+    }
+
 
     function AddedPhotos(newImage: string){
         UpdateProduct(prevState => ({
@@ -66,9 +83,9 @@ export default function ProductAdder(){
                 </input>   
             </div>
 
-            <div className="row-start-2 col-start-1 col-span-3 w-full flex flex-wrap rounded-3xl shadow-2xl border p-5 lg:ml-5">
+            <div className="row-start-2 col-start-1 col-span-3 w-full h-[70vh] flex flex-wrap rounded-3xl shadow-2xl border p-5 lg:ml-5">
                 <h1 className="basis-full w-full text-3xl text-center underline">Photos:</h1>
-                <div className="basis-1/3 flex flex-col gap-5 place-items-center">
+                <div className="basis-1/3 h-[60vh] flex flex-col gap-5 place-items-center overflow-y-scroll">
                     {product.photos.map((photo, index) =>(
                         <NewImagePreview 
                             key={index}
@@ -78,17 +95,17 @@ export default function ProductAdder(){
                     ))}                    
                 </div>
                 {product.photos.length > 0 ?
-                <div className="basis-2/3">
+                <div className="basis-2/3 h-full">
                     <p>Thumbnail/Main Photo</p>
                   <CldImage 
                     alt="product image"
                     src={product.photos[0]}
                     width={1920}
                     height={1080}
-                    className="size-full"
+                    className="h-[60vh] w-[90%] mx-5 border-5 border-red-500"
                 />    
                 </div> : null}
-               <div className="mt-10 basis-full place-items-center">
+               <div className="basis-full place-items-center">
                     <InventoryPhotoUpload 
                         addPhotos={AddedPhotos}
                     />
@@ -96,7 +113,7 @@ export default function ProductAdder(){
                 
             </div>
 
-            <div className="col-start-4 row-start-2 col-span-2 w-full flex flex-col gap-5 p-5 lg:pr-15 h-full rounded-3xl shadow-2xl">
+            <div className="col-start-4 row-start-2 col-span-2 w-full flex flex-col gap-5 p-5 lg:pr-15 h-[60vh] rounded-3xl shadow-2xl">
                 <label htmlFor="product_info" className="text-center place-content-end">Product Description(text limit: 500):</label>
                 <textarea id="product_info" maxLength={500} className="grow border-2 bg-white col-start-2 row-start-2 h-full text-2xl"
                     onChange={(e) => (UpdateProduct(prev => ({...prev, info: e.target.value})))}>
@@ -110,6 +127,37 @@ export default function ProductAdder(){
                     <input type="checkbox" id="on_sale" className="basis-1/2 h-full self-center"
                         onChange={(e) => (UpdateProduct(prev => ({...prev, on_sale: e.target.checked})))}>
                     </input>
+                    <label htmlFor="types" className="w-full text-center">Types</label>
+                    <select className="border w-full bg-white" id="types"
+                    onChange={(e) => {
+                        UpdateProduct(prev => ({...prev, type: e.target.value}));
+                        updateSubtypes(e.target.value);
+                    }}>
+                        <option value="*">All</option>
+                        {typeList.map((type) => (
+                            <option key={type.id} value={type.name}>
+                                {type.name}
+                            </option>
+                        ))}
+                    </select>
+
+                    {subtypes ?
+                        <div className="flex flex-col w-full gap-5">
+                            <label htmlFor="subtypes" className="w-full text-center">Subtypes</label>
+                            <select className="border w-full bg-white" id="subtypes" defaultValue="All"
+                            onChange={(e) => {
+                                UpdateProduct(prev => ({...prev, subtype: e.target.value}));
+                            }}>
+                                <option value="*">All</option>
+                                {subtypes.map((type: any, index: number) => (
+                                    <option key={index} value={type}>
+                                        {type}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        : null
+                    }
                 </div>
                 <div className="flex flex-col md:grid grid-cols-2 gap-2">
                     <label htmlFor="manual_sale" className="mt-10">Unique Sale Price (Will override current Specials % sale):</label>
@@ -135,8 +183,8 @@ export default function ProductAdder(){
                 </div>
                 
             </div>
-            <button className="w-full place-self-center col-start-3
-            border-2 rounded-full px-5 mt-10 text-3xl bg-red-500 active:bg-red-700 cursor-pointer"
+            <button className="place-self-center place-content-end col-start-4 col-span-2 
+            border-2 rounded-full px-5 text-5xl bg-red-500 active:bg-red-700 cursor-pointer"
                 onClick={() =>(SaveItem())}>
                 Save
                 </button>

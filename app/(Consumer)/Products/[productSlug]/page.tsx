@@ -11,7 +11,6 @@ export default async function ProductDetails({params}: {params: {productSlug: st
     const {productSlug} = await params;
 
     const currentProduct = await GetProduct(productSlug) as Product;
-    console.log(currentProduct)
     const sale = await GetSpecial() as Specials;
 
     if(currentProduct === undefined){

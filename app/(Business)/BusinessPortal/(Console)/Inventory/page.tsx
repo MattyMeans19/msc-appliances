@@ -3,7 +3,7 @@ import {decrypt} from "@/lib/session";
 import { redirect } from "next/navigation";
 import PortalHeader from "@/components/portal-header";
 import InventoryFilter from "@/components/inventory/inventory-filter";
-import { GetProducts, GetTypes } from "@/actions/business/inventory";
+import { GetAllProducts, GetTypes } from "@/actions/business/inventory";
 import InventoryDisplay from "@/components/inventory/inventory";
 import { Product } from "@/lib/definitions";
 
@@ -17,7 +17,7 @@ export default async function Inventory(){
         redirect("/BusinessPortal")
     }
 
-    const products = await GetProducts() as Product[] | string
+    const products = await GetAllProducts() as Product[] | string
 
     if(typeof products === "string"){
         alert(products)
@@ -38,6 +38,7 @@ export default async function Inventory(){
         </div>
         <InventoryDisplay 
             products={products}
+            types={productTypes!}
         />
      </div>  
     )

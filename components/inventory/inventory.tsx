@@ -2,19 +2,19 @@
 import { useState } from "react"
 import { Product } from "@/lib/definitions";
 import InventoryItem from "./inventory-item";
-import { DeleteProduct, GetProducts } from "@/actions/business/inventory";
+import { DeleteProduct, GetAllProducts } from "@/actions/business/inventory";
 import ProductAdder from "./product-adder";
 import ProductEditor from "./product-editor";
 
 interface List {
-    products: Product[]
+    products: Product[],
+    types: any[]
 }
 
 export default function InventoryDisplay(products: List){
     const [newItem, ToggleNew] = useState(false);
     const [list, updateList] = useState(products.products)
-    const [editActive, ToggleEdit] = useState(false)
-    
+    const [editingSku, setEditingSku] = useState<string | null>(null);    
 
 async function Delete(product: Product){
     const deleteRequest = await DeleteProduct(product.sku);
@@ -25,7 +25,7 @@ async function Delete(product: Product){
                 body: JSON.stringify({ publicId: photo }),
             });
             console.log("Deleted:", photo);
-            const newList = await GetProducts() as Product[];
+            const newList = await GetAllProducts() as Product[];
             updateList(newList)
             } catch (err) {
                 console.error("Could not delete old photo", err);
@@ -49,25 +49,29 @@ async function Delete(product: Product){
                     <div key={product.id} className="col-span-1 border-5 border-double border-slate-400 p-2 rounded-2xl flex flex-col">
                         <div className="place-self-end">
                             <button className="cursor-pointer" onClick={() => (Delete(product))}>🗑️</button>
-                            <button className="cursor-pointer" onClick={() => (ToggleEdit(true))}>📝</button>
+                            {/* Set the SKU of the specific product to be edited */}
+                            <button className="cursor-pointer" onClick={() => (setEditingSku(product.sku))}>📝</button>
                         </div>
-                       <InventoryItem 
-                        name={product.name}
-                        sku={product.sku}
-                        photo={product.photos[product.photos.length - 1]}
-                        count={product.count}
-                        price={product.price}
-                        on_sale={product.on_sale}
-                        manual_sale={product.manual_sale}
-                    />
-                    {editActive ? 
-                    <ProductEditor 
-                        item = {product}
-                        toggle={() =>(ToggleEdit(false))}
-                    /> :
-                    null}
+                        
+                        <InventoryItem 
+                            name={product.name}
+                            sku={product.sku}
+                            photo={product.photos[0]}
+                            count={product.count}
+                            price={product.price}
+                            on_sale={product.on_sale}
+                            manual_sale={product.manual_sale}
+                        />
+
+                        {/* Check if THIS specific product is the one we are editing */}
+                        {editingSku === product.sku && (
+                            <ProductEditor 
+                                item={product}
+                                toggle={() => setEditingSku(null)} // Close by setting back to null
+                                types={products.types}
+                            />
+                        )}
                     </div>
-                    
                 ))}
             </div>
             <div className={`fixed w-full h-full place-self-center top-0 mx-50
@@ -77,6 +81,7 @@ async function Delete(product: Product){
                         ❌
                     </button>
                     <ProductAdder
+                    types={products.types}
                     />
             </div>
         </div>

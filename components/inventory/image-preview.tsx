@@ -32,7 +32,7 @@ export default function NewImagePreview(image: Image){
                 width={1080}
                 crop="fit"
                 src={image.source}
-                className="size-15 lg:size-25 cursor-pointer"
+                className="size-15 lg:size-25"
             />
         </div>
     )
