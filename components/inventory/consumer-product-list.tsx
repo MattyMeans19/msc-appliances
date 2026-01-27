@@ -6,21 +6,42 @@ import ConsumerInventoryItem from "./consumer-inventory-item";
 export default async function ProductList({ 
     searchParams 
 }: { 
-    searchParams: Promise<{ page?: string }> // 1. Define as a Promise
+    searchParams: Promise<{ 
+        page?: string; 
+        type?: string; 
+        subtypes?: string; 
+        sale?: string
+    }> 
 }) {
-    // 2. Unwrapping the promise
-    const resolvedParams = await searchParams; 
+    const resolvedParams = await searchParams;
     const currentPage = Number(resolvedParams?.page) || 1;
     
-    const itemsPerPage = 15;
-    const data = await GetProducts(currentPage, itemsPerPage);
+    const productType = resolvedParams?.type || null;
+    const subtypes = resolvedParams?.subtypes || null;
+    const isOnSale = String(resolvedParams?.sale).toLowerCase() === 'true';
+
+    const itemsPerPage = 12;
+    const data = await GetProducts(currentPage, itemsPerPage, productType, subtypes, isOnSale);
     
-    // Safety check: If data is a string (error message) or undefined
     if (typeof data === 'string' || !data || 'error' in data) {
-        return <div className="col-span-full text-center p-10 font-bold text-red-500">{typeof data === 'string' ? data : "Error loading products."}</div>;
+        return (
+            <div className="col-span-full text-center p-10 font-bold text-red-500">
+                {typeof data === 'string' ? data : (data?.error || "Error loading products.")}
+            </div>
+        );
     }
 
     const { products, totalPages } = data;
+
+    // --- HELPER FUNCTION TO PERSIST PARAMS ---
+    const getPageLink = (pageNumber: number) => {
+        const params = new URLSearchParams();
+        params.set('page', pageNumber.toString());
+        if (productType) params.set('type', productType);
+        if (subtypes) params.set('subtypes', subtypes);
+        if (isOnSale) params.set('sale', 'true');
+        return `?${params.toString()}`;
+    };
 
     // --- Pagination Window Logic ---
     const maxVisible = 3; 
@@ -33,11 +54,8 @@ export default async function ProductList({
     const pageNumbers = Array.from({ length: (endPage - startPage) + 1 }, (_, i) => startPage + i);
 
     return (
-        /* Crucial: If this component doesn't sit inside a grid in its parent, 
-           wrap the content in a grid div here. 
-        */
         <>
-            {products && products.map((product: Product) => (
+            {products && products.map((product: any) => (
                 <Link 
                     href={`/Products/${product.sku}`} 
                     key={product.id} 
@@ -59,8 +77,9 @@ export default async function ProductList({
             <div className="col-span-full flex flex-col items-center justify-center w-full mt-16 mb-10 gap-4 px-4">
                 <div className="flex items-center justify-center gap-1 sm:gap-2">
                     
+                    {/* Previous Button */}
                     <Link
-                        href={`?page=${currentPage - 1}`}
+                        href={getPageLink(currentPage - 1)}
                         className={`px-3 py-2 border rounded-lg ${currentPage <= 1 ? 'pointer-events-none opacity-30 bg-gray-100' : 'bg-white shadow-sm hover:bg-slate-50'}`}
                     >
                         <span className="hidden sm:inline">← Previous</span>
@@ -73,7 +92,7 @@ export default async function ProductList({
                         {pageNumbers.map((page) => (
                             <Link
                                 key={page}
-                                href={`?page=${page}`}
+                                href={getPageLink(page)}
                                 className={`w-10 h-10 flex items-center justify-center rounded-lg border text-sm transition-all ${
                                     currentPage === page
                                     ? 'bg-red-500 text-white border-red-500 font-bold'
@@ -87,8 +106,9 @@ export default async function ProductList({
                         {endPage < totalPages && <span className="p-2 hidden sm:block text-slate-400">...</span>}
                     </div>
 
+                    {/* Next Button */}
                     <Link
-                        href={`?page=${currentPage + 1}`}
+                        href={getPageLink(currentPage + 1)}
                         className={`px-3 py-2 border rounded-lg ${currentPage >= totalPages ? 'pointer-events-none opacity-30 bg-gray-100' : 'bg-white shadow-sm hover:bg-slate-50'}`}
                     >
                         <span className="hidden sm:inline">Next →</span>

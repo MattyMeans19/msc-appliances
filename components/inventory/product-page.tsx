@@ -2,13 +2,17 @@
 import { CldImage } from "next-cloudinary";
 import { Product } from "@/lib/definitions"
 import { useState } from "react";
+import { useCart } from '@/context/CartContext';
 import WarrantyInfo from "./warranty-english";
+
+
 interface Item{
     item: Product,
     sale: number
 }
 
 export default function ProductPage(product: Item){
+    const { addToCart } = useCart();
     const item = product.item;
     const [currentImage, changeCurrentImage] = useState(item.photos[0]);
     const [warrantyVisible, toggleWarranty] = useState(false)
@@ -24,7 +28,7 @@ export default function ProductPage(product: Item){
         <div className="grow py-5 flex flex-wrap gap-5 lg:grid grid-cols-5 lg:gap-10 relative">
             <div className="col-span-full w-full flex justify-between border-b-5 border-slate-400/25 shadow-lg p-2">
                 <h1 className="lg:text-5xl">{item.name}</h1>
-                <h2 className="lg:h-fit lg:text-3xl">SKU: {item.sku}</h2>  
+                <h2 className="lg:h-fit lg:text-3xl">SKU: {item.sku?.toString().replace(/\.0$/, '')}</h2>  
             </div>
             
             <div className="row-start-2 col-start-1 col-span-3 w-full h-[70vh] flex rounded-3xl shadow-2xl border p-5 lg:ml-5">
@@ -35,7 +39,7 @@ export default function ProductPage(product: Item){
                             src={photo}
                             width={1920}
                             height={1080}
-                            crop="fit"
+                            crop="fill"
                             key={index}
                             className="size-15 lg:size-25 cursor-pointer"
                             onClick={() => (changeCurrentImage(photo))}
@@ -48,7 +52,7 @@ export default function ProductPage(product: Item){
                         src={currentImage}
                         width={1920}
                         height={1080}
-                        crop="fit"
+                        crop="fill"
                         className="h-full"
                     />
                 </div>                
@@ -73,16 +77,28 @@ export default function ProductPage(product: Item){
                     onClick={() => (toggleWarranty(true))}>
                     Warranty and Return Policy
                 </button>
-                <button className="bg-red-500 border w-fit p-5 rounded-3xl text-3xl cursor-pointer self-end">Add to cart</button>
+                <button className="bg-red-500 active:bg-red-700 border w-fit p-5 rounded-3xl text-3xl cursor-pointer self-end"
+                            onClick={() => addToCart({
+                            sku: item.sku,
+                            name: item.name,
+                            price: item.price,
+                            photo: item.photos[0],
+                            quantity: 1
+                        })}>
+                    Add to cart
+                </button>
             </div>
-            <div className={`fixed h-[90vh] mt-10 bg-white mx-10 overflow-y-scroll p-10 border-10 top-0
-                    ${warrantyVisible ? 'visible' : 'hidden'}`}>
-                <WarrantyInfo 
-                    parts_labor={item.parts_labor_warranty}
-                    in_store={item.in_store_warranty}
-                    close={() => (toggleWarranty(false))}
-                    showSignature= {false}
-                />                
+            {/* MODAL OVERLAY - This centers everything perfectly */}
+            <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black/60 ${warrantyVisible ? 'flex' : 'hidden'}`}>
+                {/* MODAL BOX - Controlled size and centered */}
+                <div className="relative w-full max-w-4xl h-[85vh] bg-white rounded-2xl shadow-2xl overflow-hidden">
+                    <WarrantyInfo 
+                        parts_labor={item.parts_labor_warranty}
+                        in_store={item.in_store_warranty}
+                        close={() => toggleWarranty(false)}
+                        showSignature={false}
+                    />                
+                </div>
             </div>
         </div>
     )

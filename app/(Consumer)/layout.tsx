@@ -3,6 +3,7 @@ import { Spline_Sans } from "next/font/google";
 import "@/app/globals.css";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import { CartProvider } from "@/context/CartContext";
 
 const spline = Spline_Sans({
   variable: "--font-spline-sans",
@@ -25,9 +26,11 @@ export default function RootLayout({
         className={`${spline.variable} antialiased flex flex-col max-w-screen h-screen`}
         style={{ fontFamily: 'var(--font-spline-sans)' }}
       >
+        <CartProvider>
         <Navbar />
         {children}
         <Footer />
+        </CartProvider>
       </body>
     </html>
   );

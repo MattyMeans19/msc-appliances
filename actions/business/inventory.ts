@@ -94,32 +94,61 @@ export async function AddProduct(product: NewProduct){
     }
 }
 
-export async function GetProducts(page: number = 1, limit: number = 12) {
+export async function GetProducts(
+        page: number = 1, 
+        limit: number = 12, 
+        productType?: string | null, 
+        subtypes?: string | null,
+        onSaleOnly?: boolean
+    ) {
+        console.log("Server side check - onSaleOnly is:", onSaleOnly);
+        console.log("On Sale Filter Active:", onSaleOnly);
     try {
-        // 1. Calculate the offset (how many items to skip)
         const offset = (page - 1) * limit;
-
-        // 2. Fetch the limited rows and the total count in one go (or two queries)
-        // We use ORDER BY id DESC so new items appear first
-        const productRequest = await pool.query(
-            'SELECT *, count(*) OVER() AS total_count FROM inventory ORDER BY id DESC LIMIT $1 OFFSET $2',
-            [limit, offset]
-        );
-
-        const productResults = productRequest.rows;
+        const queryParams: any[] = [limit, offset];
+        let queryValuesIndex = 3; 
         
-        // The total_count will be the same on every row thanks to OVER()
-        const totalCount = productResults.length > 0 ? parseInt(productResults[0].total_count) : 0;
+        const conditions = [];
 
-        return {
-            products: productResults,
-            totalPages: Math.ceil(totalCount / limit),
-            currentPage: page
-        };
-    } catch (error) {
-        console.log(error);
-        return { error: "Couldn't fetch products. Contact the WebMaster!" };
-    }
+        if (productType) {
+            conditions.push(`product_type = $${queryValuesIndex++}`);
+            queryParams.push(productType);
+        }
+
+        if (subtypes) {
+            const subtypeArray = subtypes.split(',');
+            conditions.push(`subtype = ANY($${queryValuesIndex++})`);
+            queryParams.push(subtypeArray);
+        }
+
+        // Add the "On Sale" condition
+        if (onSaleOnly) {
+            conditions.push(`on_sale = true`);
+        }
+
+        const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : "";
+
+            const sql = `
+                SELECT *, count(*) OVER() AS total_count 
+                FROM inventory 
+                ${whereClause} 
+                ORDER BY id DESC 
+                LIMIT $1 OFFSET $2
+            `;
+
+            const productRequest = await pool.query(sql, queryParams);
+            const productResults = productRequest.rows;
+            const totalCount = productResults.length > 0 ? parseInt(productResults[0].total_count) : 0;
+
+            return {
+                products: productResults,
+                totalPages: Math.ceil(totalCount / limit),
+                currentPage: page
+            };
+        } catch (error) {
+            console.error(error);
+            return { error: "Couldn't fetch products." };
+        }
 }
 
 export async function GetAllProducts(){

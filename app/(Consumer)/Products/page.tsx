@@ -1,25 +1,35 @@
 import ProductList from "@/components/inventory/consumer-product-list";
 import ProductLoading from "@/components/Loading/product-loading";
-import { Suspense} from "react";
+import InventoryFilters from "@/components/inventory/consumer-products-filter"; // You'll create this
+import { Suspense } from "react";
+import pool from "@/lib/db"; // Import your DB pool
 
-// Add searchParams to the page props
-export default async function Products({ searchParams }: { searchParams: Promise<{ page?: string }> }){
+export default async function Products({ 
+    searchParams 
+}: { 
+    searchParams: Promise<{ page?: string; type?: string; subtypes?: string; sale?: string}> 
+}){
+    // Fetch categories for the filter sidebar from your mapping table
+    const categoryRequest = await pool.query('SELECT * FROM subtypes ORDER BY product_type ASC');
+    const categories = categoryRequest.rows;
 
-    return(
-        <div className="grow w-full border-y-2 border-red-500 rounded-2xl place-self-center mb-10 gap-5 flex flex-col pt-5">
-            <div className="border-b-2 rounded-2xl h-[10vh] w-[90%] mx-[5%] border-gray-400/40 shadow-md shadow-slate-400">
-                {/* Search/Filter bar goes here */}
-            </div>
-            
-            {/* REMOVED overflow-y-scroll here to prevent click blocking */}
-            <div className="border-2 border-gray-400 grow mb-5 mx-5 inset-ring-12 
-                inset-ring-slate-600/15 p-10 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 auto-rows-fr gap-5">
-                
-                <Suspense fallback={<ProductLoading />}>
-                    {/* Pass searchParams here! */}
-                    <ProductList searchParams={searchParams} />
-                </Suspense>
+    return (
+        <div className="grow w-full border-y-2 border-red-500 rounded-2xl place-self-center mb-10 flex flex-col pt-5">
+            <div className="flex flex-col md:flex-row grow gap-5 p-5">
+                {/* SIDEBAR: Filters */}
+                <aside className="w-full md:w-64 shrink-0">
+                    <InventoryFilters categories={categories} />
+                </aside>
+
+                {/* MAIN GRID: Products */}
+                <div className="border-2 border-gray-400 grow mb-5 inset-ring-12 
+                    inset-ring-slate-600/15 p-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 auto-rows-fr gap-5">
+                    
+                    <Suspense fallback={<ProductLoading />}>
+                        <ProductList searchParams={searchParams} />
+                    </Suspense>
+                </div>
             </div>
         </div>
-    )
+    );
 }

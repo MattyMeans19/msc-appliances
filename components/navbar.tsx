@@ -8,12 +8,18 @@ import Drawer from "./mobile-drawer";
 import { useEffect, useState } from "react";
 import LoadingPage from "./Loading/page-loading";
 import { usePathname } from "next/navigation";
+import { useCart } from '@/context/CartContext';
 
 export default function Navbar(){
     const [drawer, toggleDrawer] = useState(false);
     const [loading, ToggleLoading] = useState(false);
     const [page, updatePage] = useState("");
     const pathname = usePathname();
+
+    const { cart } = useCart();
+    const [mounted, setMounted] = useState(false);
+
+    const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
 
     useEffect(() =>{
         if(pathname.includes(page)){
@@ -23,7 +29,8 @@ export default function Navbar(){
                 ToggleLoading(false)
             }
         }
-    })
+        setMounted(true);
+    }, [page, pathname])
 
     function DrawerView(){
         toggleDrawer(!drawer)
@@ -69,12 +76,15 @@ export default function Navbar(){
                 }}>
                     About Us
                 </Link>
-                <Link href="/Cart" aria-description="Link to current cart" className="Nav-Item" 
+                <Link href="/Cart" aria-description="Link to current cart" className="Nav-Item flex" 
                  onClick={() => {
                     updatePage("Cart");
                     ToggleLoading(true)
                 }}>
-                    <h2 className="bg-red-500 text-center rounded-2xl">0</h2>🛒
+                   <span className="bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center animate-in zoom-in">
+                        {totalItems}
+                    </span>
+                    🛒
                 </Link>
             </div>
 
