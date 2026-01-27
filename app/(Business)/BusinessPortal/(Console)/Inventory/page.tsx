@@ -2,7 +2,6 @@ import { cookies } from "next/headers";
 import {decrypt} from "@/lib/session";
 import { redirect } from "next/navigation";
 import PortalHeader from "@/components/portal-header";
-import InventoryFilter from "@/components/inventory/inventory-filter";
 import { GetAllProducts, GetTypes } from "@/actions/business/inventory";
 import InventoryDisplay from "@/components/inventory/inventory";
 import { Product } from "@/lib/definitions";
@@ -31,11 +30,6 @@ export default async function Inventory(){
             inventory="bg-gray-400"
             tools="bg-gray-200"
         />
-        <div className="mx-5 md:mx-10 p-5 text-center place-content-center">
-            <InventoryFilter 
-                item={productTypes!}
-            />
-        </div>
         <InventoryDisplay 
             products={products}
             types={productTypes!}

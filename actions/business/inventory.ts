@@ -101,8 +101,7 @@ export async function GetProducts(
         subtypes?: string | null,
         onSaleOnly?: boolean
     ) {
-        console.log("Server side check - onSaleOnly is:", onSaleOnly);
-        console.log("On Sale Filter Active:", onSaleOnly);
+
     try {
         const offset = (page - 1) * limit;
         const queryParams: any[] = [limit, offset];

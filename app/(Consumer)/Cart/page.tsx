@@ -89,16 +89,16 @@ export default function CartPage() {
                   <span>${formatter.format(cartTotal)}</span>
                 </div>
                 <div className="flex justify-between text-slate-600 text-sm">
-                  <span>Sales Tax (8.125%)</span>
+                  <span>Sales Tax (7.63%)</span>
                   {/* We use the same precise calculation as your original */}
-                  <span>${(cartTotal * 0.08125).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  <span>${(cartTotal * 0.0763).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
               </div>
               
               <div className="flex justify-between font-bold text-xl mb-6">
                 <span>Total</span>
                 <span className="text-red-600">
-                  ${(cartTotal * 1.08125).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  ${(cartTotal * 1.0763).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
 

@@ -2,7 +2,7 @@
 
 import Script from 'next/script';
 import { useCart } from '@/context/CartContext';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ProcessPayment } from '@/actions/checkout';
 
 export default function CheckoutPage() {
@@ -10,8 +10,9 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [deliveryMethod, setDeliveryMethod] = useState<'pickup' | 'delivery'>('pickup');
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
+  const [deliveryAddress, updateAddress] = useState("")
 
-  const totalWithTax = (cartTotal * 1.08125).toFixed(2);
+  const totalWithTax = (cartTotal * 1.0763).toFixed(2);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -38,6 +39,12 @@ export default function CheckoutPage() {
         clientKey: process.env.NEXT_PUBLIC_AUTHNET_CLIENT_KEY,
       }
     };
+
+    useEffect(() =>{
+      if(deliveryAddress != ""){
+        
+      }
+    })
 
     // 2. Dispatch to Authorize.net
     // @ts-ignore
@@ -139,7 +146,8 @@ export default function CheckoutPage() {
             name="address" 
             placeholder="Delivery Address (Street, City, Zip)" 
             className="p-3 border-2 border-red-100 rounded-xl bg-red-50/30 animate-in fade-in slide-in-from-top-2" 
-            required 
+            required
+            onChange={(e) => updateAddress(e.target.value)}
           />
         )}
 

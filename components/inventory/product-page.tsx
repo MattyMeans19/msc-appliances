@@ -39,7 +39,7 @@ export default function ProductPage(product: Item){
                             src={photo}
                             width={1920}
                             height={1080}
-                            crop="fill"
+                            crop="fit"
                             key={index}
                             className="size-15 lg:size-25 cursor-pointer"
                             onClick={() => (changeCurrentImage(photo))}
@@ -52,7 +52,7 @@ export default function ProductPage(product: Item){
                         src={currentImage}
                         width={1920}
                         height={1080}
-                        crop="fill"
+                        crop="fit"
                         className="h-full"
                     />
                 </div>                
@@ -78,13 +78,17 @@ export default function ProductPage(product: Item){
                     Warranty and Return Policy
                 </button>
                 <button className="bg-red-500 active:bg-red-700 border w-fit p-5 rounded-3xl text-3xl cursor-pointer self-end"
-                            onClick={() => addToCart({
+                            onClick={() => {
+                            addToCart({
                             sku: item.sku,
                             name: item.name,
                             price: item.price,
                             photo: item.photos[0],
                             quantity: 1
-                        })}>
+                        });
+                        alert("Added to cart!");
+                        }
+                            }>
                     Add to cart
                 </button>
             </div>

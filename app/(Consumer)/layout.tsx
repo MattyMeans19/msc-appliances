@@ -12,7 +12,8 @@ const spline = Spline_Sans({
 
 export const metadata: Metadata = {
   title: "MSC Appliances",
-  description: "The best source for used, reconditioned Appliance sales in the Albuquerque Metro and Rio Rancho area. Locally owned and operated.",
+  description: `The best source for used, reconditioned Appliance sales in the Albuquerque Metro and Rio Rancho area. Locally owned and operated.
+  Use coupon code MSCONGOOGLE for a special offer!`,
 };
 
 export default function RootLayout({

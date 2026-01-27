@@ -183,3 +183,26 @@ export async function createSale(
     client.release();
   }
 }
+
+export async function CheckMilage(address: string){
+
+    const storeAddress = "5815 Lomas Blvd NE, Albuquerque, NM 87110";
+    try {
+      const distanceResponse = await fetch(
+        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(storeAddress)}&destinations=${encodeURIComponent(address)}&units=imperial&key=${process.env.GOOGLE_MAPS_API_KEY}`
+      );
+      const distanceData = await distanceResponse.json();
+      const element = distanceData.rows[0]?.elements[0];
+
+      if (!element || element.status !== "OK") {
+        return { success: false, error: "Address not found. Please check your delivery address." };
+      }
+
+      const distanceInMiles = element.distance.value / 1609.34;
+      if (distanceInMiles > 30) {
+        return { success: false, error: `Delivery is ${distanceInMiles.toFixed(1)} miles away. We only deliver within 30 miles.` };
+      }
+    } catch (err) {
+      return { success: false, error: "Distance validation failed. Please try again." };
+    }
+}

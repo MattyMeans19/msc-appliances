@@ -3,17 +3,17 @@ import { GetSubtypes, GetTypes, NewSubtype, NewType } from "@/actions/business/i
 import { useState } from "react";
 
 interface ProcductType{
-    item: any[]
-    
+    item: any[],
+    filter: Function
 }
 
 export default function InventoryFilter(array: ProcductType){
     const [type, changeType] = useState("*");
     const [typeList, updateList] = useState(array.item)
     const [subtypes, changeSubTypes]: any = useState ([]);
-    const [selectedSub, changeSelectedSub] = useState("");
-    const [deliverable, toggleDeliverable] = useState(Boolean);
-    const [onSale, toggleOnSale] = useState(Boolean);
+    const [selectedSub, changeSelectedSub] = useState("*");
+    const [deliverable, toggleDeliverable] = useState(false);
+    const [onSale, toggleOnSale] = useState(false);
     const [newType, updateNewType] = useState("");
     const [newSubtype, updateNewSubtype] = useState("");
     const [forType, changeForType] = useState("");
@@ -57,10 +57,36 @@ export default function InventoryFilter(array: ProcductType){
         }
     }
 
+    function Filter(){
+        let filterParams = {
+            type: type,
+            subtype: selectedSub,
+            delivery: deliverable,
+            sale: onSale
+        }
+        array.filter(filterParams)
+    }
+
+    function clearAll() {
+    changeType("*");
+    changeSelectedSub("*");
+    toggleDeliverable(false);
+    toggleOnSale(false);
+    
+    // Call the parent filter with the "All" values immediately
+    array.filter({
+        type: "*",
+        subtype: "*",
+        delivery: false,
+        sale: false
+    });
+}
+
+
 
     return(
-        <div className="flex flex-col md:flex-row lg:text-2xl gap-20">
-            <div className="border-10 border-double border-slate-500 w-full md:basis-3/5 lg:basis-2/3 md:grid grid-cols-3 p-2">
+        <div className="flex flex-col md:flex-row lg:text-2xl lg:gap-20">
+            <div className="text-center border-10 border-double border-slate-500 flex flex-col w-full md:basis-3/5 lg:basis-2/3 md:grid grid-cols-3 p-2">
                 <span className="text-3xl underline col-span-full text-ceneter row-start-1">Inventory Filters</span>
                 <div className="col-span-2 row-start-2 p-5 w-full flex flex-col gap-5">
                     <label htmlFor="types" className="w-full text-center">Types</label>
@@ -80,7 +106,7 @@ export default function InventoryFilter(array: ProcductType){
                     {subtypes ?
                         <div className="flex flex-col w-full gap-5">
                             <label htmlFor="subtypes" className="w-full text-center">Subtypes</label>
-                            <select className="border w-full" id="subtypes" defaultValue="All"
+                            <select className="border w-full" id="subtypes"
                             onChange={(e) => {
                                 changeSelectedSub(e.target.value);
                             }}>
@@ -100,9 +126,14 @@ export default function InventoryFilter(array: ProcductType){
                     <span className="w-full">On Sale <input type="checkbox" onChange={(e) => {toggleOnSale(e.target.checked)}}></input></span>
                 </div>
                 <button className="bg-red-500 active:bg-red-700 lg:text-3xl lg:p-2 border-2 rounded-full
-                col-span-1 col-start-2 row-start-3 w-full">
+                col-span-1 col-start-2 row-start-3 w-full" onClick={() =>(Filter())}>
                     Filter
-                </button>     
+                </button>  
+                <button className="text-gray-500 text-md p-2 rounded-full mt-2 cursor-pointer" 
+                    onClick={clearAll}
+                >
+                    Clear Filters
+                </button>   
             </div>
             
             <div className="basis-1/5 lg:basis-1/3 w-full h-full place-items-center flex flex-col p-2 gap-2 border-10 border-double border-slate-500 mt-5 md:mt-0">

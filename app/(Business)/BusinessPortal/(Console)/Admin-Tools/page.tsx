@@ -4,6 +4,9 @@ import { redirect } from "next/navigation";
 import PortalHeader from "@/components/portal-header";
 import { GetEmployees } from "@/actions/business/actions";
 import EmployeeTable from "@/components/admin-tools/employee-table";
+import Coupons from "@/components/admin-tools/coupons";
+import { GetCoupons } from "@/actions/business/coupons";
+
 
 
 export default async function AdminTools(){
@@ -16,6 +19,8 @@ export default async function AdminTools(){
     if(currentUser === undefined){
         redirect("/BusinessPortal")
     }
+
+    const coupons = await GetCoupons();
     
 
     return(
@@ -25,19 +30,26 @@ export default async function AdminTools(){
             inventory="bg-gray-200"
             tools="bg-gray-400"
         />
-        <div className="md:m-10 grow flex flex-col p-2 gap-10">
-            <div className="bg-slate-400 p-5 text-2xl w-full text-center rounded-2xl">
+        <div className="md:m-10 grow flex flex-col lg:grid grid-cols-5 p-2 gap-10">
+            <div className="bg-slate-400 p-5 text-2xl w-full text-center rounded-2xl col-span-3 h-full flex flex-col">
+                <h1 className="font-bold underline">User Details</h1>
                 <h2>Inventory Access - Admin, Manager, Employee</h2>
                 <h2>Create new users- Admin, Manager</h2>
                 <h2>Delete Users- Admin</h2>
                 <h2>Create New Specials- Admin, Manager</h2>
                 <h2>Change Specials- Admin, Manager</h2>
                 <h2>Edit any user- Admin</h2>
+                <h2>Create Coupons- Admin, Manager</h2>
                 <h2>Any user can edit their own data.</h2>
+                <div className="grow overflow-y-scroll border-5 border-double bg-white">
+                    <EmployeeTable 
+                        array={userList}
+                        curentUser={currentUser}
+                    />                
+                </div>
             </div>
-            <EmployeeTable 
-                array={userList}
-                curentUser={currentUser}
+            <Coupons 
+                coupons={coupons}
             />
         </div>
      </div>

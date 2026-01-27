@@ -93,7 +93,7 @@ export default function EmployeeTable(props: Employees){
                 </div>
             </div>
             <div className={`${currentAccess != "Employee" ? 'visible' : 'hidden'}`}>
-                <button className="w-full text-2xl border-3 border-slate-400 mt-5 active:bg-slate-400" onClick={() => (toggleNew())}>
+                <button className="w-fit px-10 text-2xl border-3 border-slate-400 mt-5 active:bg-slate-400" onClick={() => (toggleNew())}>
                     {newActive ? "Cancel ❌" : "➕Add User"} 
                 </button>    
             </div>

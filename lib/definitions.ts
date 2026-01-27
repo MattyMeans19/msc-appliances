@@ -79,3 +79,9 @@ export type FormState =
     type: string,
     subtype:string
   }
+
+  export type Coupon = {
+    code: string,
+    discount: number,
+    type: string
+  }

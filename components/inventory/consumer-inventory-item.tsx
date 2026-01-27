@@ -51,7 +51,7 @@ export default function ConsumerInventoryItem(props: SelectedProduct){
        <div className="col-span-1 h-full relative flex flex-col">
     {/* Sale Badge - Adjusted positioning to not break layout */}
     {product.on_sale && (
-        <p className="absolute -top-4 left-1/2 -translate-x-1/2 z-10 px-4 py-1 text-sm font-bold text-white bg-red-500 rounded-full animate-bounce">
+        <p className="absolute -top-4 left-1/2 -translate-x-1/2 z-10 px-4 py-1 text-sm font-bold text-nowrap text-white bg-red-500 rounded-full animate-bounce">
             On Sale!
         </p>
     )}
@@ -73,7 +73,7 @@ export default function ConsumerInventoryItem(props: SelectedProduct){
                 alt={product.name}
                 fill // Use fill with relative parent for better responsiveness
                 src={product.photo}
-                crop="fit"
+                crop="fill"
                 className="object-cover"
             />            
 

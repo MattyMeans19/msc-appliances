@@ -187,16 +187,16 @@ export default function WarrantyInfo(props: Warranties) {
                                     className="w-full bg-transparent border-b-2 border-black h-12 text-2xl px-2 focus:outline-none focus:border-red-500 font-serif italic"
                                 />
                             </div>
-                            <button 
-                                onClick={handleConfirmSignature}
-                                className="w-full md:w-auto bg-red-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-red-700 transition-all shadow-md active:scale-95"
-                            >
-                                {lang === 'EN' ? "ACCEPT & SIGN" : "ACEPTAR Y FIRMAR"}
-                            </button>
                         </div>
                     </div>
                 )}
             </div>
+            <button 
+                onClick={handleConfirmSignature}
+                className="w-full md:w-auto bg-red-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-red-700 transition-all shadow-md active:scale-95"
+            >
+                {lang === 'EN' ? "ACCEPT & SIGN" : "ACEPTAR Y FIRMAR"}
+            </button>
         </div>
     );
 }
