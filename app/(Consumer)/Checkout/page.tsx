@@ -87,6 +87,8 @@ const handleVerifyMileage = async () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const currentForm = event.currentTarget;
+    const formData = new FormData(currentForm);
     if (!privacyAccepted) return;
 
     setIsProcessing(true);
@@ -112,7 +114,6 @@ const handleVerifyMileage = async () => {
     }
 
     setProcessMessage("Validating Card...");
-    const formData = new FormData(event.currentTarget);
     const rawMonth = formData.get('month')?.toString() || "";
     const rawYear = formData.get('year')?.toString() || "";
     const formattedMonth = rawMonth.padStart(2, '0');
@@ -134,8 +135,18 @@ const handleVerifyMileage = async () => {
     // @ts-ignore
     window.Accept.dispatchData(secureData, async (response: any) => {
       if (response.messages.resultCode === "Error") {
-        alert(`Payment Error: ${response.messages.message[0].text}`);
+        const errorText = response.messages.message[0].text;
+        let userMessage = "There was an issue with your card information.";
+
+        if (errorText.includes("apiloginid") || errorText.includes("clientKey")) {
+          userMessage = "Card validation failed. Please check your card number and try again.";
+        } else if (errorText.includes("expiration date")) {
+          userMessage = "The expiration date is invalid.";
+        }
+
+        alert(userMessage);
         setIsProcessing(false);
+        return; // Stop the process here
       } else {
         setProcessMessage("Processing Payment...");
 
@@ -150,6 +161,7 @@ const handleVerifyMileage = async () => {
           opaqueDataValue: response.opaqueData.dataValue,
           opaqueDataDescriptor: response.opaqueData.dataDescriptor,
           amount: grandTotal,
+          taxAmount: taxAmount.toFixed(2),
           customer: {
             firstName: formData.get('firstName') as string,
             lastName: formData.get('lastName') as string,
@@ -307,7 +319,7 @@ const handleVerifyMileage = async () => {
         <div className="flex items-start gap-3 p-4 bg-slate-50 rounded-xl mt-4 border border-slate-100">
           <input type="checkbox" id="privacy" required checked={privacyAccepted} onChange={(e) => setPrivacyAccepted(e.target.checked)} className="mt-1 w-4 h-4 accent-red-600" />
           <label htmlFor="privacy" className="text-[10px] text-slate-500 leading-tight cursor-pointer">
-            I agree to the <strong>Privacy Policy</strong>: Data is used only for order fulfillment. MSC Appliances does not sell data to 3rd parties.
+            I agree to the <strong>Privacy Policy</strong>: Data is used only for order fulfillment. MSC Appliances does not sell data to 3rd parties. Data can be deleted upon user request.
           </label>
         </div>
         

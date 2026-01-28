@@ -27,17 +27,18 @@ export default function SuccessPage() {
   return (
     <div className="max-w-2xl mx-auto p-8 my-10 bg-white border border-slate-200 rounded-3xl shadow-sm" id="receipt-content">
       
-      {/* HEADER FOR PRINTING */}
+      {/* HEADER FOR PRINTING ONLY */}
       <div className="hidden print:block mb-8 border-b-2 pb-4">
         <h1 className="text-2xl font-bold italic text-red-600">MSC APPLIANCES</h1>
         <p className="text-sm">5815 Lomas Blvd NE, Albuquerque, NM 87110</p>
+        <p className="text-xs text-slate-500">Receipt Generated: {new Date().toLocaleDateString()}</p>
       </div>
 
       <div className="flex justify-between items-start mb-10">
         <div>
-          <span className="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full uppercase">Payment Verified</span>
+          <span className="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full uppercase no-print">Payment Verified</span>
           <h2 className="text-3xl font-black mt-2">Thank You!</h2>
-          <p className="text-slate-400 font-mono text-xs mt-1">ID: {order.transactionId}</p>
+          <p className="text-slate-400 font-mono text-xs mt-1">Order ID: {order.id?.replace('sale_', '')}</p>
         </div>
         <div className="text-right">
             <p className="font-bold text-lg">{order.firstName} {order.lastName}</p>
@@ -54,11 +55,11 @@ export default function SuccessPage() {
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-50">
-          {order.items.map((item: any, idx: number) => (
+          {order.items?.map((item: any, idx: number) => (
             <tr key={idx}>
               <td className="py-4">
                 <p className="font-bold text-slate-800">{item.name}</p>
-                <p className="text-[10px] text-slate-400 font-mono">SKU: {item.sku}</p>
+                <p className="text-[10px] text-slate-400 font-mono uppercase">SKU: {item.sku.replace(('.0'),(''))}</p>
               </td>
               <td className="py-4 text-right font-semibold text-slate-700">
                 ${(item.price / 100).toFixed(2)}
@@ -69,15 +70,26 @@ export default function SuccessPage() {
       </table>
 
       {/* FOOTER TOTALS */}
-      <div className="w-full sm:w-64 ml-auto space-y-3 pt-4">
-        <div className="flex justify-between text-sm text-slate-500">
+      <div className="w-full sm:w-64 ml-auto space-y-3 pt-4 border-t border-slate-100">
+        <div className="flex justify-between text-xs text-slate-500">
           <span>Fulfillment:</span>
-          <span className="font-bold text-slate-900 uppercase text-xs">{order.fulfillmentType}</span>
+          <span className="font-bold text-slate-900 uppercase">{order.fulfillmentType}</span>
         </div>
-        <div className='flex flex-nowrap w-full text-slate-400 justify-between'>
-          <p>Tax: </p>
-          <p>${(order.totalAmount * 0.0819).toFixed(2)}</p>
+        
+        {/* Uses the saved Delivery Fee */}
+        {parseFloat(order.delivery_fee) > 0 && (
+          <div className="flex justify-between text-xs text-slate-500">
+            <span>Delivery Fee:</span>
+            <span>${parseFloat(order.delivery_fee).toFixed(2)}</span>
+          </div>
+        )}
+
+        {/* Uses the saved Tax Amount from your DB update */}
+        <div className='flex justify-between text-xs text-slate-500'>
+          <span>Tax:</span>
+          <span>${parseFloat(order.tax_amount || 0).toFixed(2)}</span>
         </div>
+
         <div className="flex justify-between text-2xl font-black border-t-4 border-slate-900 pt-4">
           <span>PAID</span>
           <span className="text-red-600">${parseFloat(order.totalAmount).toFixed(2)}</span>
@@ -85,7 +97,7 @@ export default function SuccessPage() {
       </div>
 
       {/* DYNAMIC INSTRUCTIONS */}
-      <div className="mt-12 p-6 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 no-print">
+      <div className="mt-12 p-6 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
         <h3 className="font-bold text-slate-800 mb-2">Next Steps</h3>
         {order.fulfillmentType === 'delivery' ? (
           <p className="text-sm text-slate-600 leading-relaxed">
@@ -98,6 +110,7 @@ export default function SuccessPage() {
         )}
       </div>
 
+      {/* BUTTONS - Hidden during print */}
       <div className="flex gap-3 mt-8 no-print">
         <button 
             onClick={() => window.print()}
@@ -115,8 +128,36 @@ export default function SuccessPage() {
 
       <style jsx global>{`
         @media print {
-          nav, footer, .no-print { display: none !important; }
-          #receipt-content { border: none !important; box-shadow: none !important; width: 100% !important; margin: 0 !important; }
+          /* 1. Hide everything by default */
+          body * {
+            visibility: hidden;
+          }
+
+          /* 2. Only show the receipt content and its children */
+          #receipt-content, #receipt-content * {
+            visibility: visible;
+          }
+
+          /* 3. Position the receipt at the very top-left of the page */
+          #receipt-content {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100% !important;
+            border: none !important;
+            box-shadow: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+
+          /* 4. Hide common layout IDs and elements just to be safe */
+          nav, footer, header, 
+          #main-nav, #main-footer, 
+          .no-print, button {
+            display: none !important;
+            height: 0 !important;
+            overflow: hidden !important;
+          }
         }
       `}</style>
     </div>
