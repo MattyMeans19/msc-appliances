@@ -64,7 +64,7 @@ export default function ConsumerInventoryItem(props: SelectedProduct){
     </div>
 
     {/* Sku Section */}
-    <h2 className="text-center text-sm text-gray-500 mb-3">Sku: {product.sku?.toString().replace(/\.0$/, '')}</h2>
+    <h2 className="text-center text-sm text-gray-500 mb-3">Sku: {product.sku}</h2>
 
     {/* 2. Aspect-Ratio Locked Image */}
     <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-gray-100 mb-4">

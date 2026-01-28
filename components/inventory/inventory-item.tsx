@@ -56,7 +56,7 @@ export default function InventoryItem(props: SelectedProduct){
     {/* Header Info */}
     <div className="mb-2">
         <h1 className="font-bold text-sm lg:text-lg leading-tight line-clamp-1">{product.name}</h1>
-        <p className="text-gray-500 text-center text-xs">Sku: {product.sku?.toString().replace(/\.0$/, '')}</p>
+        <p className="text-gray-500 text-center text-xs">Sku: {product.sku}</p>
     </div>
 
     {/* Image Container with Fixed Ratio */}

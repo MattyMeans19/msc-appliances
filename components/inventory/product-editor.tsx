@@ -72,7 +72,7 @@ export default function ProductEditor(item: Item){
                     onChange={(e) => (UpdateProduct(prev => ({...prev, name: e.target.value})))}>
                 </textarea>
                 <label htmlFor="product_sku" className="text-center place-self-end text-2xl">Product Sku:</label>
-                <input type="text" id="product_sku" className="border place-self-end bg-white text-center" defaultValue={product.sku?.toString().replace(/\.0$/, '')}
+                <input type="text" id="product_sku" className="border place-self-end bg-white text-center" defaultValue={product.sku}
                         onChange={(e) => (UpdateProduct(prev => ({...prev, sku: e.target.value})))}>
                 </input>   
             </div>

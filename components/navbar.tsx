@@ -24,7 +24,7 @@ export default function Navbar(){
     useEffect(() =>{
         if(pathname.includes(page)){
             ToggleLoading(false)
-        } else if(!pathname.includes("Products") || !pathname.includes("Contact") || !pathname.includes("About") || !pathname.includes("Cart")){
+        } else if(!pathname.includes("Products") || !pathname.includes("Contact") || !pathname.includes("About") || !pathname.includes("Cart") || !pathname.includes("Checkout")){
             if(page === "Home"){
                 ToggleLoading(false)
             }
