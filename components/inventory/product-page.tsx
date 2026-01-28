@@ -4,6 +4,7 @@ import { Product } from "@/lib/definitions"
 import { useState } from "react";
 import { useCart } from '@/context/CartContext';
 import WarrantyInfo from "./warranty-english";
+import CardLoading from "../Loading/card-image-loading";
 
 
 interface Item{
@@ -32,7 +33,7 @@ export default function ProductPage(product: Item){
             </div>
             
             <div className="row-start-2 col-start-1 col-span-3 w-full h-[70vh] flex rounded-3xl shadow-2xl border p-5 lg:ml-5">
-                <div className="basis-1/3 flex flex-col gap-5 place-items-center overflow-y-scroll">
+                <div className="basis-1/3 flex flex-col gap-5 place-items-center overflow-y-scroll relative bg-slate-200 animate-pulse rounded-2xl overflow-hidden">
                     {item.photos.map((photo, index) =>(
                         <CldImage 
                             alt="product image"
@@ -43,10 +44,12 @@ export default function ProductPage(product: Item){
                             key={index}
                             className="size-15 lg:size-25 cursor-pointer"
                             onClick={() => (changeCurrentImage(photo))}
+                            onLoad={(e) => e.currentTarget.parentElement?.classList.remove('animate-pulse', 'bg-slate-200')}
+                            
                         />
                     ))}
                 </div>
-                <div className="basis-2/3">
+                <div className="basis-2/3 relative bg-slate-200 animate-pulse rounded-2xl overflow-hidden">
                     <CldImage 
                         alt="product image"
                         src={currentImage}
@@ -54,6 +57,7 @@ export default function ProductPage(product: Item){
                         height={1080}
                         crop="fit"
                         className="h-full"
+                        onLoad={(e) => e.currentTarget.parentElement?.classList.remove('animate-pulse', 'bg-slate-200')}
                     />
                 </div>                
             </div>

@@ -23,7 +23,7 @@ export default async function Products({
 
                 {/* MAIN GRID: Products */}
                 <div className="border-2 border-gray-400 grow mb-5 inset-ring-12 
-                    inset-ring-slate-600/15 p-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 auto-rows-fr gap-5">
+                    inset-ring-slate-600/15 p-10">
                     
                     <Suspense fallback={<ProductLoading />}>
                         <ProductList searchParams={searchParams} />

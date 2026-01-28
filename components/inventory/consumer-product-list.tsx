@@ -1,7 +1,7 @@
 import { GetProducts } from "@/actions/business/inventory";
-import { Product } from "@/lib/definitions";
 import Link from "next/link";
 import ConsumerInventoryItem from "./consumer-inventory-item";
+import SortSelect from "./SortSelect";
 
 export default async function ProductList({ 
     searchParams 
@@ -10,7 +10,8 @@ export default async function ProductList({
         page?: string; 
         type?: string; 
         subtypes?: string; 
-        sale?: string
+        sale?: string;
+        sort?: string;
     }> 
 }) {
     const resolvedParams = await searchParams;
@@ -18,10 +19,13 @@ export default async function ProductList({
     
     const productType = resolvedParams?.type || null;
     const subtypes = resolvedParams?.subtypes || null;
+    const sortOrder = resolvedParams?.sort || 'newest';
     const isOnSale = String(resolvedParams?.sale).toLowerCase() === 'true';
 
     const itemsPerPage = 12;
-    const data = await GetProducts(currentPage, itemsPerPage, productType, subtypes, isOnSale);
+    
+    // Make sure your GetProducts action is updated to receive this 6th argument (sortOrder)
+    const data = await GetProducts(currentPage, itemsPerPage, productType, subtypes, isOnSale, sortOrder);
     
     if (typeof data === 'string' || !data || 'error' in data) {
         return (
@@ -33,13 +37,14 @@ export default async function ProductList({
 
     const { products, totalPages } = data;
 
-    // --- HELPER FUNCTION TO PERSIST PARAMS ---
+    // --- HELPER FUNCTION TO PERSIST ALL PARAMS IN PAGINATION ---
     const getPageLink = (pageNumber: number) => {
         const params = new URLSearchParams();
         params.set('page', pageNumber.toString());
         if (productType) params.set('type', productType);
         if (subtypes) params.set('subtypes', subtypes);
         if (isOnSale) params.set('sale', 'true');
+        if (sortOrder && sortOrder !== 'newest') params.set('sort', sortOrder);
         return `?${params.toString()}`;
     };
 
@@ -54,24 +59,37 @@ export default async function ProductList({
     const pageNumbers = Array.from({ length: (endPage - startPage) + 1 }, (_, i) => startPage + i);
 
     return (
-        <>
-            {products && products.map((product: any) => (
-                <Link 
-                    href={`/Products/${product.sku}`} 
-                    key={product.id} 
-                    className="col-span-1 h-full p-5 rounded-3xl shadow-2xl shadow-slate-500/30 border bg-white"
-                >
-                    <ConsumerInventoryItem 
-                        name={product.name}
-                        sku={product.sku}
-                        photo={product.photos[0]}
-                        count={product.count}
-                        price={product.price}
-                        on_sale={product.on_sale}
-                        manual_sale={product.manual_sale}
-                    />  
-                </Link>
-            ))}
+        <div className="flex flex-col gap-5">
+            <div className="col-span-full flex justify-end px-2">
+                <SortSelect />
+            </div>
+
+            <div className="flex flex-col md:grid md:grid-cols-3 lg:grid-cols-4 gap-5">
+                {products && products.length > 0 ? (
+                    products.map((product: any) => (
+                        <Link 
+                            href={`/Products/${product.sku}`} 
+                            key={product.id} 
+                            className="col-span-1 h-full p-5 rounded-3xl shadow-2xl shadow-slate-500/30 border bg-white hover:scale-[1.02] transition-transform duration-300"
+                        >
+                            <ConsumerInventoryItem 
+                                name={product.name}
+                                sku={product.sku}
+                                photo={product.photos[0]}
+                                count={product.count}
+                                price={product.price}
+                                on_sale={product.on_sale}
+                                manual_sale={product.manual_sale}
+                            />  
+                        </Link>
+                    ))
+                ) : (
+                    <div className="col-span-full text-center py-20 text-slate-400 italic text-xl">
+                        No products found matching these filters.
+                    </div>
+                )}                
+            </div>
+
 
             {/* Pagination Container */}
             <div className="col-span-full flex flex-col items-center justify-center w-full mt-16 mb-10 gap-4 px-4">
@@ -120,6 +138,6 @@ export default async function ProductList({
                     Page {currentPage} of {totalPages}
                 </p>
             </div>
-        </>
+        </div>
     );
 }

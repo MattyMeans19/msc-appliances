@@ -18,36 +18,14 @@ export async function ProcessPayment(paymentData: {
   deliveryMethod: 'pickup' | 'delivery';
   skuList: string;
   items: any[];
+  deliveryFee: number;
+  couponCode: string | null;
 }) {
   const skus = paymentData.skuList.split(',').filter(Boolean);
-  
-  // 1. RADIUS CHECK (Same logic as before, but outside of any DB transaction)
-  if (paymentData.deliveryMethod === 'delivery') {
-    const storeAddress = "5815 Lomas Blvd NE, Albuquerque, NM 87110";
-    try {
-      const distanceResponse = await fetch(
-        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(storeAddress)}&destinations=${encodeURIComponent(paymentData.customer.address)}&units=imperial&key=${process.env.GOOGLE_MAPS_API_KEY}`
-      );
-      const distanceData = await distanceResponse.json();
-      const element = distanceData.rows[0]?.elements[0];
-
-      if (!element || element.status !== "OK") {
-        return { success: false, error: "Address not found. Please check your delivery address." };
-      }
-
-      const distanceInMiles = element.distance.value / 1609.34;
-      if (distanceInMiles > 30) {
-        return { success: false, error: `Delivery is ${distanceInMiles.toFixed(1)} miles away. We only deliver within 30 miles.` };
-      }
-    } catch (err) {
-      return { success: false, error: "Distance validation failed. Please try again." };
-    }
-  }
-
   const client = await pool.connect();
 
   try {
-    // 2. AUTHORIZE.NET CALL (Fastest way to use the token)
+    // 1. AUTHORIZE.NET PAYMENT CAPTURE
     const authResponse = await fetch(
       process.env.NODE_ENV === 'production' 
         ? "https://api.authorize.net/xml/v1/request.api" 
@@ -79,23 +57,43 @@ export async function ProcessPayment(paymentData: {
     const authResult = await authResponse.json();
 
     if (authResult.messages.resultCode !== "Ok") {
-      return { success: false, error: authResult.transactionResponse?.errors?.[0]?.errorText || "Payment Declined" };
+      return { 
+        success: false, 
+        error: authResult.transactionResponse?.errors?.[0]?.errorText || "Payment Declined" 
+      };
     }
 
     const transId = authResult.transactionResponse.transId;
 
-    // 3. BEGIN DATABASE UPDATES
+    // 2. BEGIN DATABASE TRANSACTION
     await client.query('BEGIN');
 
-    // Update Customer
+    // Update/Insert Customer and Append Coupon to their history
+    // We use array_append and COALESCE to handle new users or null arrays
+    const couponToRecord = paymentData.couponCode ? paymentData.couponCode.toUpperCase() : null;
+
     await client.query(
-      `INSERT INTO customers (first_name, last_name, email, phone)
-       VALUES ($1, $2, $3, $4) 
-       ON CONFLICT (email) DO UPDATE SET first_name = $1, last_name = $2, phone = $4`,
-      [paymentData.customer.firstName, paymentData.customer.lastName, paymentData.customer.email, paymentData.customer.phone]
+      `INSERT INTO customers (first_name, last_name, email, phone, used_coupons)
+       VALUES ($1, $2, $3, $4, $5) 
+       ON CONFLICT (email) DO UPDATE 
+       SET first_name = $1, 
+           last_name = $2, 
+           phone = $4,
+           used_coupons = CASE 
+             WHEN $6::text IS NOT NULL THEN array_append(COALESCE(customers.used_coupons, ARRAY[]::text[]), $6)
+             ELSE customers.used_coupons
+           END`,
+      [
+        paymentData.customer.firstName, 
+        paymentData.customer.lastName, 
+        paymentData.customer.email, 
+        paymentData.customer.phone,
+        couponToRecord ? [couponToRecord] : [], // Initial array for new customer
+        couponToRecord // Coupon to append for existing customer
+      ]
     );
 
-    // Lock Inventory
+    // Atomic Inventory Update (One-of-one check)
     const invResult = await client.query(
       "UPDATE inventory SET count = count - 1 WHERE sku = ANY($1) AND count > 0 RETURNING sku",
       [skus]
@@ -103,33 +101,42 @@ export async function ProcessPayment(paymentData: {
 
     if (invResult.rowCount !== skus.length) {
       await client.query('ROLLBACK');
-      return { success: false, error: "One of your items sold out during checkout." };
+      return { success: false, error: "An item in your cart sold out during processing." };
     }
 
-    // Record the Sale with Fulfillment Type & Items
+    // Record the Final Sale Record
     await client.query(
-      `INSERT INTO "Sale" (id, "firstName", "lastName", "phoneNumber", "fulfillmentType", "totalAmount", "transactionId", items, status)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'Pending')`,
+      `INSERT INTO "Sale" (
+        id, "firstName", "lastName", "phoneNumber", "fulfillmentType", 
+        "totalAmount", "transactionId", items, status, delivery_fee, coupon_code
+      )
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'Pending', $9, $10)`,
       [
         `sale_${transId}`,
         paymentData.customer.firstName,
         paymentData.customer.lastName,
         paymentData.customer.phone,
-        paymentData.deliveryMethod, // 'pickup' or 'delivery'
+        paymentData.deliveryMethod,
         paymentData.amount,
         transId,
-        JSON.stringify(paymentData.items)
+        JSON.stringify(paymentData.items),
+        paymentData.deliveryFee,
+        couponToRecord
       ]
     );
 
     await client.query('COMMIT');
+    
+    // Clear cache for inventory and sales lists
     revalidatePath('/admin/sales');
+    revalidatePath('/Products');
+
     return { success: true, transId };
 
   } catch (error) {
     if (client) await client.query('ROLLBACK');
     console.error("Critical Checkout Error:", error);
-    return { success: false, error: "Internal Server Error" };
+    return { success: false, error: "Internal Server Error during processing." };
   } finally {
     client.release();
   }
@@ -184,25 +191,68 @@ export async function createSale(
   }
 }
 
-export async function CheckMilage(address: string){
+export async function FinalCheck(skus: string[]) {
+  try {
+    // 1. Query all SKUs in the array at once
+    // Using = ANY($1) is the standard Postgres way to handle arrays in queries
+    const check = await pool.query(
+        'SELECT sku FROM inventory WHERE sku = ANY($1)', 
+        [skus]
+    );
+    
+    const foundSkus = check.rows.map(row => row.sku);
+    
+    // 2. Identify which SKUs from the cart are missing from the DB
+    const missingSkus = skus.filter(sku => !foundSkus.includes(sku));
 
-    const storeAddress = "5815 Lomas Blvd NE, Albuquerque, NM 87110";
-    try {
-      const distanceResponse = await fetch(
-        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(storeAddress)}&destinations=${encodeURIComponent(address)}&units=imperial&key=${process.env.GOOGLE_MAPS_API_KEY}`
-      );
-      const distanceData = await distanceResponse.json();
-      const element = distanceData.rows[0]?.elements[0];
-
-      if (!element || element.status !== "OK") {
-        return { success: false, error: "Address not found. Please check your delivery address." };
-      }
-
-      const distanceInMiles = element.distance.value / 1609.34;
-      if (distanceInMiles > 30) {
-        return { success: false, error: `Delivery is ${distanceInMiles.toFixed(1)} miles away. We only deliver within 30 miles.` };
-      }
-    } catch (err) {
-      return { success: false, error: "Distance validation failed. Please try again." };
+    if (missingSkus.length === 0) {
+      return { available: true };
+    } else {
+      // Return the missing SKUs so the UI can tell the user exactly what sold out
+      return { 
+        available: false, 
+        missing: missingSkus 
+      };
     }
+  } catch (error) {
+    console.error("Database Error in FinalCheck:", error);
+    return { error: "Could not verify inventory availability." };
+  }
+}
+
+export async function CheckCoupon(code: string, email: string) {
+  try {
+    // 1. Fetch the coupon details
+    const couponCheck = await pool.query('SELECT * FROM coupons WHERE code = $1', [code.toUpperCase()]);
+    
+    if (couponCheck.rows.length === 0) {
+      return { success: false, coupon: null, message: "No Matching Coupon Code!" };
+    }
+    
+    const coupon = couponCheck.rows[0];
+
+    // 2. Check if customer exists and has used this coupon
+    const customerCheck = await pool.query(
+      'SELECT coupons FROM customers WHERE email = $1', 
+      [email]
+    );
+
+    // Get the array safely (default to empty array if customer or field is missing)
+    const usedCoupons = customerCheck.rows[0]?.used_coupons || [];
+
+    if (usedCoupons.includes(code.toUpperCase())) {
+      return { success: false, coupon: null, message: "You have already used this coupon code!" };
+    }
+
+    // 3. Success branch - always return the same object structure
+    return { 
+      success: true, 
+      coupon: coupon, // This is the object { code, discount, type }
+      message: "Coupon applied successfully!" 
+    };
+    
+  } catch (error) {
+    console.error("Coupon Check Error:", error);
+    return { success: false, coupon: null, message: "Error verifying coupon." };
+  }
 }

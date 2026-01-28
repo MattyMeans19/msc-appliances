@@ -95,13 +95,13 @@ export async function AddProduct(product: NewProduct){
 }
 
 export async function GetProducts(
-        page: number = 1, 
-        limit: number = 12, 
-        productType?: string | null, 
-        subtypes?: string | null,
-        onSaleOnly?: boolean
-    ) {
-
+    page: number = 1, 
+    limit: number = 12, 
+    productType?: string | null, 
+    subtypes?: string | null,
+    onSaleOnly?: boolean,
+    sortOrder: string = 'newest' // <--- Add this 6th argument
+) {
     try {
         const offset = (page - 1) * limit;
         const queryParams: any[] = [limit, offset];
@@ -110,7 +110,7 @@ export async function GetProducts(
         const conditions = [];
 
         if (productType) {
-            conditions.push(`product_type = $${queryValuesIndex++}`);
+            conditions.push(`type = $${queryValuesIndex++}`);
             queryParams.push(productType);
         }
 
@@ -120,34 +120,39 @@ export async function GetProducts(
             queryParams.push(subtypeArray);
         }
 
-        // Add the "On Sale" condition
         if (onSaleOnly) {
             conditions.push(`on_sale = true`);
         }
 
         const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : "";
 
-            const sql = `
-                SELECT *, count(*) OVER() AS total_count 
-                FROM inventory 
-                ${whereClause} 
-                ORDER BY id DESC 
-                LIMIT $1 OFFSET $2
-            `;
+        // --- DYNAMIC SORTING LOGIC ---
+        let orderBy = "id DESC"; // Default (Newest)
+        if (sortOrder === 'price-low') orderBy = "price ASC";
+        if (sortOrder === 'price-high') orderBy = "price DESC";
+        if (sortOrder === 'alpha') orderBy = "name ASC";
 
-            const productRequest = await pool.query(sql, queryParams);
-            const productResults = productRequest.rows;
-            const totalCount = productResults.length > 0 ? parseInt(productResults[0].total_count) : 0;
+        const sql = `
+            SELECT *, count(*) OVER() AS total_count 
+            FROM inventory 
+            ${whereClause} 
+            ORDER BY ${orderBy} 
+            LIMIT $1 OFFSET $2
+        `;
 
-            return {
-                products: productResults,
-                totalPages: Math.ceil(totalCount / limit),
-                currentPage: page
-            };
-        } catch (error) {
-            console.error(error);
-            return { error: "Couldn't fetch products." };
-        }
+        const productRequest = await pool.query(sql, queryParams);
+        const productResults = productRequest.rows;
+        const totalCount = productResults.length > 0 ? parseInt(productResults[0].total_count) : 0;
+
+        return {
+            products: productResults,
+            totalPages: Math.ceil(totalCount / limit),
+            currentPage: page
+        };
+    } catch (error) {
+        console.error("Database Error:", error);
+        return { error: "Couldn't fetch products." };
+    }
 }
 
 export async function GetAllProducts(){
