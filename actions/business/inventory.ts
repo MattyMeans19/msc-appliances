@@ -169,7 +169,7 @@ export async function GetAllProducts(){
 export async function DeleteProduct(product: string){
     try{
         await pool.query('DELETE from inventory WHERE sku = $1', [product]);
-        return "Item Deleted From Inventory";
+        return `Product: ${product} deleted from inventory, and related photos have been removed from server!`;
     } catch(error){
         console.log(error);
         return "Error deleteing item from inventory!"

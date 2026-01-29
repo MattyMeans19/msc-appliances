@@ -109,3 +109,13 @@ export async function DeleteUser(id: number){
         return "Failed to delete user!"
     }
 } 
+
+export async function GetAccess(user: string){
+    try{
+        const userAccess = await pool.query(`SELECT privilege FROM employees WHERE username = $1`, [user]);
+        let result = userAccess.rows
+        return result[0].privilege
+    } catch(error){
+        console.log("Failed to get user access!")
+    }
+}

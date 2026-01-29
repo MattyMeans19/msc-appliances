@@ -21,6 +21,7 @@ export default async function ProductList({
     const subtypes = resolvedParams?.subtypes || null;
     const sortOrder = resolvedParams?.sort || 'newest';
     const isOnSale = String(resolvedParams?.sale).toLowerCase() === 'true';
+    let clicked = false;
 
     const itemsPerPage = 12;
     
@@ -57,6 +58,10 @@ export default async function ProductList({
         startPage = Math.max(1, endPage - maxVisible + 1);
     }
     const pageNumbers = Array.from({ length: (endPage - startPage) + 1 }, (_, i) => startPage + i);
+
+    function ItemClicked(){
+        clicked = true
+    }
 
     return (
         <div className="flex flex-col gap-5">
@@ -138,6 +143,7 @@ export default async function ProductList({
                     Page {currentPage} of {totalPages}
                 </p>
             </div>
+            
         </div>
     );
 }

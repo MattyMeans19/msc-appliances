@@ -2,9 +2,11 @@
 import { CreateCoupon } from "@/actions/business/coupons";
 import { Coupon } from "@/lib/definitions";
 import { useState } from "react";
+import Locked from "./locked";
 
 interface List{
-    coupons: Coupon[] | string
+    coupons: Coupon[] | string,
+    user: string
 }
 
 export default function Coupons(coupons: List){
@@ -27,16 +29,17 @@ export default function Coupons(coupons: List){
     }
 
     return(
-        <div className="col-span-2 border-2 h-fit flex flex-col gap-5 p-5">
+        <div className="col-span-2 border-5 border-double h-full flex flex-col gap-5 p-5 relative">
+            {coupons.user !== "Employee" ? null : <Locked />}
             <h1 className="font-bold underline text-3xl text-center">Coupon Codes</h1>
             <div className="flex flex-col gap-5 border-b">
                 <div className="flex flex-nowrap gap-2">
                     <label htmlFor="code" className="text-2xl basis-1/5">Code: </label>
                     <input type="text" id="code" autoComplete="off" className="uppercase text-2xl border" onChange={(e) => updateNew(prev => ({ ...prev, code: e.target.value.toUpperCase()}))}/>   
                 </div>
-                <div className="flex flex-nowrap gap-2">
+                <div className="flex flex-nowrap lg:gap-2">
                     <label htmlFor="discount" className="text-2xl basis-1/5">Amount: </label>
-                    <input type="number" id="discount" autoComplete="off" className="text-2xl border" onChange={(e) => updateNew(prev => ({ ...prev, discount: e.target.valueAsNumber}))}/>
+                    <input type="number" id="discount" autoComplete="off" className="text-2xl border w-50 lg:w-fit" onChange={(e) => updateNew(prev => ({ ...prev, discount: e.target.valueAsNumber}))}/>
                     <select className="basis-1/5 border" onChange={(e) => updateNew(prev => ({ ...prev, type: e.target.value}))}>
                     <option value="$" className="text-center text-2xl">$</option>
                     <option value="%" className="text-center text-2xl">%</option>
@@ -47,7 +50,7 @@ export default function Coupons(coupons: List){
                     Add Coupon
                 </button>
             </div>
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-5 overflow-y-scroll">
                 <h1 className="text-4xl bold underline text-center">Current Available Codes</h1>
                 {typeof coupons.coupons === "string" ? 
                 <p>{coupons.coupons}</p> :

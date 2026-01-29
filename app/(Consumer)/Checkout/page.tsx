@@ -25,6 +25,8 @@ export default function CheckoutPage() {
   const [emailInput, setEmailInput] = useState("");
   const [deliveryFee, setDeliveryFee] = useState(0);
   const [verifyingAddress, setVerifyingAddress] = useState(false);
+  const [phoneInput, setPhoneInput] = useState("");
+  const [cardNumberDisplay, setCardNumberDisplay] = useState("");
 
   const discountAmount = coupon 
     ? (coupon.type === 'percent' ? cartTotal * (coupon.discount / 100) : coupon.discount)
@@ -33,6 +35,20 @@ export default function CheckoutPage() {
   const subtotalAfterDiscount = Math.max(0, cartTotal - discountAmount);
   const taxAmount = subtotalAfterDiscount * 0.0763;
   const grandTotal = (subtotalAfterDiscount + taxAmount + deliveryFee).toFixed(2);
+
+  const formatPhone = (value: string) => {
+    const digits = value.replace(/\D/g, ""); // Remove all non-digits
+      if (digits.length <= 3) return digits;
+      if (digits.length <= 6) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+      return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
+  };
+  const formatCard = (value: string) => {
+    const digits = value.replace(/\D/g, "");
+    return digits
+      .match(/.{1,4}/g)
+      ?.join("-")
+      .slice(0, 19) || ""; // Max length including dashes
+  };
 
   useEffect(() => {
     if (deliveryMethod === 'pickup') {
@@ -120,8 +136,9 @@ const handleVerifyMileage = async () => {
     const formattedYear = rawYear.length === 2 ? `20${rawYear}` : rawYear;
 
     const secureData: any = {
-      cardData: {
-        cardNumber: formData.get('cardNumber')?.toString().replace(/\s+/g, ''),
+    cardData: {
+        // This regex removes the dashes we just added for the UI
+        cardNumber: cardNumberDisplay.replace(/-/g, ''), 
         month: formattedMonth,
         year: formattedYear,
         cardCode: formData.get('cardCode')?.toString(),
@@ -166,7 +183,7 @@ const handleVerifyMileage = async () => {
             firstName: formData.get('firstName') as string,
             lastName: formData.get('lastName') as string,
             email: emailInput,
-            phone: formData.get('phone') as string,
+            phone: phoneInput, // Saves as xxx-xxx-xxxx
             address: deliveryAddress || '5815 Lomas Blvd NE, Albuquerque, NM 87110',
           },
           deliveryMethod,
@@ -238,7 +255,15 @@ const handleVerifyMileage = async () => {
             value={emailInput}
             onChange={(e) => setEmailInput(e.target.value)}
         />
-        <input name="phone" type="tel" placeholder="Phone Number" className="p-3 border rounded-xl bg-slate-50" required />
+        <input 
+          name="phone" 
+          type="tel" 
+          placeholder="Phone Number (xxx-xxx-xxxx)" 
+          className="p-3 border rounded-xl bg-slate-50" 
+          required 
+          value={phoneInput}
+          onChange={(e) => setPhoneInput(formatPhone(e.target.value))}
+        />
 
         {/* Fulfillment Choice */}
         <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 mt-2">
@@ -308,7 +333,14 @@ const handleVerifyMileage = async () => {
         
         {/* Payment Info */}
         <p className="font-bold text-xs uppercase tracking-widest text-slate-400">Card Details</p>
-        <input name="cardNumber" placeholder="Card Number" className="p-3 border rounded-xl bg-slate-50" required />
+        <input 
+          name="cardNumber" 
+          placeholder="Card Number" 
+          className="p-3 border rounded-xl bg-slate-50 text-center tracking-widest" 
+          required 
+          value={cardNumberDisplay}
+          onChange={(e) => setCardNumberDisplay(formatCard(e.target.value))}
+        />
         <div className="flex gap-2">
           <input name="month" placeholder="MM" className="w-1/3 p-3 border rounded-xl bg-slate-50" required />
           <input name="year" placeholder="YY" className="w-1/3 p-3 border rounded-xl bg-slate-50" required />

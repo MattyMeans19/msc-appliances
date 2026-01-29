@@ -1,7 +1,5 @@
 import ProductList from "@/components/inventory/consumer-product-list";
-import ProductLoading from "@/components/Loading/product-loading";
 import InventoryFilters from "@/components/inventory/consumer-products-filter"; // You'll create this
-import { Suspense } from "react";
 import pool from "@/lib/db"; // Import your DB pool
 
 export default async function Products({ 
@@ -24,10 +22,7 @@ export default async function Products({
                 {/* MAIN GRID: Products */}
                 <div className="border-2 border-gray-400 grow mb-5 inset-ring-12 
                     inset-ring-slate-600/15 p-10">
-                    
-                    <Suspense fallback={<ProductLoading />}>
-                        <ProductList searchParams={searchParams} />
-                    </Suspense>
+                    <ProductList searchParams={searchParams} />
                 </div>
             </div>
         </div>

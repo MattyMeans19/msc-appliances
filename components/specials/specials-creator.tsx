@@ -70,7 +70,10 @@ export default function SpecialsCreator(props: Active){
     }
 
     async function Toggle(){
-        await DeleteFromCloud(currentImage);
+        if(currentImage != ""){
+            await DeleteFromCloud(currentImage);    
+        }
+        
         props.toggleActive();
     }
 

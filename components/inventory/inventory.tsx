@@ -26,21 +26,32 @@ export default function InventoryDisplay(products: List){
 
     async function Delete(product: Product){
         const deleteRequest = await DeleteProduct(product.sku);
-        product.photos.forEach(async(photo) =>{
-                try {
-                    await fetch("/api/delete-photo", {
-                    method: "POST",
-                    body: JSON.stringify({ publicId: photo }),
-                });
-                console.log("Deleted:", photo);
-                const newList = await GetAllProducts() as Product[];
-                updateList(newList)
-                } catch (err) {
-                    console.error("Could not delete old photo", err);
+        for (const photo of product.photos) {
+            try {
+                const cleanId = photo.includes('/') ? photo.split('/').pop() : photo;
+                    const res = await fetch("/api/delete-photo", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ publicId: cleanId }),
+                    });
+
+                    if (!res.ok) {
+                        const errorData = await res.json();
+                        console.error(`Failed to delete ${cleanId}:`, errorData);
+                    } else {
+                        console.log("Deleted photo:", cleanId);
+                    }
+                    } catch (err) {
+                        console.error("Network error deleting photo:", err);
+                    }
                 }
-        })
-        alert(deleteRequest)
-    }
+
+                // 3. Update the UI ONCE after all deletions are attempted
+                const newList = await GetAllProducts() as Product[];
+                updateList(newList);
+                
+                alert(deleteRequest);
+        }
 
     function filterProducts(params: Filter) {
         const filteredList = products.products.filter((item) => {
