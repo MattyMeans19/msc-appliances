@@ -1,6 +1,6 @@
 export default function ProductLoading() {
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-slate-400/5 z-50">
+    <div className="fixed flex w-screen h-screen flex-col items-center justify-center bg-slate-400/10 z-50">
       <svg 
         className="size-12 animate-spin text-red-600 mb-4" 
         xmlns="http://www.w3.org/2000/svg" 

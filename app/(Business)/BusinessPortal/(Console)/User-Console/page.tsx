@@ -14,7 +14,7 @@ export default async function UserConsole(){
     }
 
     return(
-        <div className="grow flex flex-col gap-25">
+        <div className="grow flex flex-col gap-25 h-full">
             <PortalHeader
             general="bg-gray-400"
             inventory="bg-gray-200"

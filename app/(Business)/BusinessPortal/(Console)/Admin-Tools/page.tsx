@@ -29,7 +29,7 @@ export default async function AdminTools(){
     
 
     return(
-     <div className="grow flex flex-col">
+     <div className="grow flex flex-col h-full">
         <PortalHeader 
             general="bg-gray-200"
             inventory="bg-gray-200"
@@ -46,7 +46,7 @@ export default async function AdminTools(){
                 <h2>Edit any user- Admin</h2>
                 <h2>Create Coupons- Admin, Manager</h2>
                 <h2>Any user can edit their own data.</h2>
-                <div className="grow overflow-y-scroll border-5 border-double bg-white">
+                <div className="grow border-5 border-double bg-white">
                     <EmployeeTable 
                         array={userList}
                         curentUser={currentUser}

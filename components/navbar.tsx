@@ -20,11 +20,13 @@ export default function Navbar(){
     const [mounted, setMounted] = useState(false);
 
     const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
+    const pages = ["Products", "Contact", "About", "Cart", "Checkout"]
+    const isCustomPage = !pages.some(path => pathname.includes(path));
 
     useEffect(() =>{
         if(pathname.includes(page)){
             ToggleLoading(false)
-        } else if(!pathname.includes("Products") || !pathname.includes("Contact") || !pathname.includes("About") || !pathname.includes("Cart") || !pathname.includes("Checkout")){
+        } else if(isCustomPage){
             if(page === "Home"){
                 ToggleLoading(false)
             }
@@ -35,6 +37,8 @@ export default function Navbar(){
     function DrawerView(){
         toggleDrawer(!drawer)
     }
+
+
 
     return(
         <div className="flex flex-col md:grid grid-cols-3 w-full relative">

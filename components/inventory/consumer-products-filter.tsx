@@ -18,13 +18,9 @@ export default function InventoryFilters({ categories }: InventoryFiltersProps) 
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-
-  // Handle the 'any' error for state by telling TS this is a string or null
-  const [expandedType, setExpandedType] = useState<string | null>(null);
+  const [expandedType, setExpandedType] = useState<string | null>(searchParams.get('type'));
 
   const selectedType = searchParams.get('type');
-  
-  // 2. Fix the 'never[]' error by explicitly typing the array as string[]
   const selectedSubtypes: string[] = searchParams.get('subtypes')?.split(',') || [];
 
   const updateFilters = (type: string, subtypesArray: string[] = []) => {
@@ -39,18 +35,23 @@ export default function InventoryFilters({ categories }: InventoryFiltersProps) 
     }
 
     params.set('page', '1');
-    router.push(`${pathname}?${params.toString()}`);
+    
+    // OPTIMIZATION: scroll: false prevents the jumpy UI
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   return (
-    <div className="w-full md:w-64 p-4 border rounded-xl bg-white shadow-sm">
+    <div className="w-full md:w-64 p-4 border rounded-xl bg-white shadow-sm sticky top-5">
       <h2 className="font-bold text-lg mb-4 text-slate-800 border-b pb-2">Filter Items</h2>
       
       {categories.map((cat: Category) => (
         <div key={cat.id} className="mb-3">
           <div className="flex items-center justify-between gap-2">
             <button
-              onClick={() => updateFilters(cat.product_type)}
+              onClick={() => {
+                updateFilters(cat.product_type);
+                setExpandedType(cat.product_type); // Expand when selected
+              }}
               className={`text-left font-medium grow py-1 px-2 rounded-lg transition-colors ${
                 selectedType === cat.product_type 
                 ? 'bg-red-50 text-red-600' 
@@ -68,9 +69,11 @@ export default function InventoryFilters({ categories }: InventoryFiltersProps) 
             </button>
           </div>
 
+          {/* Subtype Logic stays the same... it works great! */}
           {expandedType === cat.product_type && (
             <div className="ml-4 mt-2 space-y-2 border-l-2 border-gray-100 pl-3">
-              {cat.subtype.map((sub: string) => (
+              {/* Ensure subtypes is an array, fallback to empty array if not */}
+              {(Array.isArray(cat.subtype) ? cat.subtype : []).map((sub: string) => (
                 <label key={sub} className="flex items-center space-x-2 cursor-pointer group">
                   <input
                     type="checkbox"
@@ -96,9 +99,10 @@ export default function InventoryFilters({ categories }: InventoryFiltersProps) 
         </div>
       ))}
       
+      {/* Reset button with scroll: false as well */}
       <button 
-        onClick={() => router.push(pathname)}
-        className="w-full mt-4 py-2 text-xs font-semibold text-gray-400 hover:text-red-500 uppercase tracking-wider transition-colors"
+        onClick={() => router.push(pathname, { scroll: false })}
+        className="w-full mt-4 py-2 text-xs font-semibold text-gray-400 hover:text-red-500 uppercase tracking-wider transition-colors border-t"
       >
         Reset All
       </button>
