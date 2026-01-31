@@ -2,7 +2,7 @@
 
 import bcrypt from "bcrypt";
 import pool from "@/lib/db";
-import { FormState, NewUser } from "@/lib/definitions";
+import { FormState, NewUser, User } from "@/lib/definitions";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { redirect } from "next/navigation";
 import { createSession, deleteSession } from "@/lib/session";
@@ -13,16 +13,16 @@ export async function Login(formState: FormState, formData: FormData){
     let password = formData.get("password") as string;
 
     try{
-        const loginRequest = await pool.query('SELECT password FROM employees WHERE username = $1', [userName]);
+        const loginRequest = await pool.query('SELECT password FROM employees WHERE username = $1', [userName.toUpperCase()]);
         let loginResponse = loginRequest.rows
 
         const passwordCheck = await bcrypt.compare(password, loginResponse[0].password)
 
         if(passwordCheck){
-            await createSession(userName);
+            await createSession(userName.toUpperCase());
             redirect("/BusinessPortal/User-Console")
         } else{
-            return {message: "Login Failed"}
+            return {message: "Wrong Password"}
         }
     } catch(error){
         if (isRedirectError(error)) {
@@ -41,7 +41,7 @@ export async function Logout(){
 
 export async function CheckAccess(uName: string){
     try{
-        const accessRequest = await pool.query("SELECT privilege FROM employees WHERE username = $1", [uName])
+        const accessRequest = await pool.query("SELECT privilege FROM employees WHERE username = $1", [uName.toUpperCase()])
         let accessResults = accessRequest.rows;
         return accessResults[0].privilege;
     } catch(error){
@@ -50,7 +50,7 @@ export async function CheckAccess(uName: string){
 }
 
 export async function GetEmployees(user: string){
-    let currentUser = user;
+    let currentUser = user.toUpperCase();
     let access;
     try{
         const userRequest = await pool.query('SELECT privilege FROM employees WHERE username = $1', [currentUser]);
@@ -63,7 +63,7 @@ export async function GetEmployees(user: string){
                 return listResults;
                 
             } catch(error){
-                alert(error)
+                console.log(error)
             }
         } else {
             try{
@@ -72,17 +72,16 @@ export async function GetEmployees(user: string){
                 return listResults;
                 
             } catch(error){
-                alert(error)
+                console.log(error)
             }
         }
         } catch(error){
             console.log(error)
-            alert(error)
         }
 }
 
 export async function CreateNewUser(newUser: NewUser){
-    const userName = newUser.username;
+    const userName = newUser.username.toUpperCase();
     const fName = newUser.fname;
     const lName = newUser.lname;
     const privilege = newUser.privilege;
@@ -112,10 +111,22 @@ export async function DeleteUser(id: number){
 
 export async function GetAccess(user: string){
     try{
-        const userAccess = await pool.query(`SELECT privilege FROM employees WHERE username = $1`, [user]);
+        const userAccess = await pool.query(`SELECT privilege FROM employees WHERE username = $1`, [user.toUpperCase()]);
         let result = userAccess.rows
         return result[0].privilege
     } catch(error){
         console.log("Failed to get user access!")
+    }
+}
+
+export async function EditUser(user: User){
+    try{
+        await pool.query(`UPDATE employees WHERE username id = $1 
+            SET username = $2, password = $3, fname = $4, lname = $5, privilege = $6`, 
+            [user.id, user.username.toUpperCase(), user.password, user.fname, user.lname, user.privilege])
+
+    } catch(error){
+        console.log(error);
+        return "Error Editing User Data!"
     }
 }

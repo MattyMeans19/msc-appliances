@@ -59,20 +59,16 @@ export default function EmployeeTable(props: Employees){
                     <h2 className="Table-header">Uesr Role</h2>
                     <h2 className="Table-header">Edit / Delete</h2>
                 </div>
-                <div className="grow h-full">
+                <div className="grow h-full md:relative">
                 {props.array.map((employee) =>(
                     <EmployeeRow
                         key={employee.id}
-                        id={employee.id}
-                        username={employee.username}
-                        fname={employee.fname}
-                        lname={employee.lname}
-                        privilege={employee.privilege}
-                        currentUser={props.curentUser}
+                        user = {employee}
+                        currentUser = {props.curentUser}
                     />
                 ))}
                     <div className={`${newActive ? 'visible' : 'hidden'} grow absolute inset-0 w-full h-full border-5 bg-slate-300 p-10 flex flex-wrap gap-10 justify-evenly`}>
-                        <input autoComplete="off" type="text" id="username" className="h-[10%] basis-2/3 border bg-white" placeholder="User Name" onChange={(e) => changeUserInfo(prev => ({ ...prev, username: e.target.value}))}></input>
+                        <input autoComplete="off" type="text" id="username" className="h-[10%] basis-2/3 border bg-white uppercase" placeholder="User Name" onChange={(e) => changeUserInfo(prev => ({ ...prev, username: e.target.value}))}></input>
                         <input autoComplete="off" type="text" id="fname" className="h-[10%] basis-1/3 border bg-white" placeholder="First Name" onChange={(e) => changeUserInfo(prev => ({ ...prev, fname: e.target.value}))}></input>
                         <input autoComplete="off" type="text" id="lname" className="h-[10%] basis-1/3 border bg-white" placeholder="Last Name" onChange={(e) => changeUserInfo(prev => ({ ...prev, lname: e.target.value}))}></input>
                         <div className="basis-full flex justify-center place-items-center gap-10">
@@ -88,7 +84,8 @@ export default function EmployeeTable(props: Employees){
                             <input autoComplete="off" className="border bg-white" type="text" id="password"  placeholder="Password"
                             onChange={(e) => changeUserInfo(prev => ({ ...prev, password: e.target.value}))}>
                             </input>
-                            <button onClick={() =>(toggleNew)} className="active:border-2 border-red-500 basis-full" onClickCapture={() => (SaveNew())}>💾 Save</button>
+                            <button onClick={() =>(toggleNew())} className="active:border-2 border-red-500 basis-full" onClickCapture={() => (SaveNew())}>💾 Save</button>
+                            <button onClick={() =>(toggleNew())} className="active:border-2 border-red-500 basis-full">❌ Cancel</button>
                     </div>
                 </div>
                 <div className={`${currentAccess != "Employee" ? 'visible' : 'hidden'}`}>
