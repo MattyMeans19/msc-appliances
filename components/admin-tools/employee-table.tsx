@@ -56,7 +56,7 @@ export default function EmployeeTable(props: Employees){
                     <h2 className="Table-header">User Name</h2>
                     <h2 className="Table-header">First Name</h2>
                     <h2 className="Table-header">Last Name</h2>
-                    <h2 className="Table-header">Uesr Role</h2>
+                    <h2 className="Table-header">User Role</h2>
                     <h2 className="Table-header">Edit / Delete</h2>
                 </div>
                 <div className="grow h-full md:relative">

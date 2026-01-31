@@ -1,0 +1,12 @@
+import { MetadataRoute } from 'next';
+
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: {
+      userAgent: '*',
+      allow: '/',
+      disallow: ['/BusinessPortal', '/api/'], // Exclude admin routes and your logic APIs
+    },
+    sitemap: 'https://msc-appliances.com/sitemap.xml',
+  };
+}
