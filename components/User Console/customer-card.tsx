@@ -64,7 +64,7 @@ export default function CustomerCard(customer: Info){
                         <div className="w-full flex flex-col gap-5 px-10 min-h-full">
                             {sales.map((sale, index) => (
                                 <div key={index} className="flex flex-col gap-2 lg:gap-0 lg:grid grid-cols-4 p-10 lg:text-2xl border-5 border-double bg-white relative">
-                                    <button onClick={() => (GetReceieptData(sale.transactionId))} className="absolute top-5 right-5 cursor-pointer">🧾Receipt</button>
+                                    <button onClick={() => (GetReceieptData(sale.transactionId))} className="absolute top-2.5 right-5 cursor-pointer">🧾Receipt</button>
                                     <span className="col-span-1">Transaction #: {sale.transactionId}</span>
                                     <span className={`col-span-1 lg:text-center ${sale.status === 'Pending' ? 'text-red-500' : 'text-green-600'}`}>
                                         Status: {sale.status}
@@ -80,8 +80,8 @@ export default function CustomerCard(customer: Info){
                                         </div>
                                     ))}
                                     {receipt ? 
-                                    <div className="bg-slate-400/85 fixed inset-0 z-80 w-screen h-screen">
-                                        <button className="absolute right-130 top-100 z-100 text-3xl cursor-pointer"
+                                    <div className="bg-slate-400/85 fixed inset-0 z-80 w-screen h-full">
+                                        <button className="fixed w-full bg-white z-100 text-3xl cursor-pointer"
                                             onClick={() =>(ToggleReceipt(false))}>
                                             ❌
                                         </button>
