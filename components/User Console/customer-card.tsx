@@ -23,7 +23,6 @@ export default function CustomerCard(customer: Info){
     async function GetReceieptData(id: string){
         const orderData = await GetReceipt(id);
         updateReceiptData(orderData!);
-        console.log(receiptData)
         ToggleReceipt(true);
     }
 
