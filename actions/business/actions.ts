@@ -2,10 +2,11 @@
 
 import bcrypt from "bcrypt";
 import pool from "@/lib/db";
-import { FormState, NewUser, User } from "@/lib/definitions";
+import { Customer, FormState, NewUser, Receipt, User } from "@/lib/definitions";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { redirect } from "next/navigation";
 import { createSession, deleteSession } from "@/lib/session";
+import { NextResponse } from "next/server";
 
 
 export async function Login(formState: FormState, formData: FormData){
@@ -130,3 +131,45 @@ export async function EditUser(user: User){
         return "Error Editing User Data!"
     }
 }
+
+export async function GetCustomers(){
+    try{
+        const customerRequest = await pool.query(`SELECT * FROM customers`);
+        let results = customerRequest.rows;
+        return results as any[];
+    } catch(error){
+        console.log(error);
+        return "Error Fetching Customers!"
+    }
+}
+
+export async function GetSales(customer: Customer){
+    const fname = customer.first_name;
+    const lname = customer.last_name;
+    const phone = customer.phone
+    try{
+        const salesRequest = await pool.query(`SELECT * FROM "Sale" WHERE "firstName" = $1 AND "lastName" = $2 AND "phoneNumber" = $3`, 
+            [fname, lname, phone]
+        )
+        let salesResults = salesRequest.rows;
+        return salesResults;
+    } catch(error){
+        console.log(error);
+        return "Couldn't fetch Sale Data!"
+    }
+}
+
+export async function GetReceipt(trans: string){
+     try {
+    
+        const result = await pool.query(
+          `SELECT * FROM "Sale" WHERE "transactionId" = $1 LIMIT 1`,
+          [trans]
+        );
+    
+        const order = result.rows[0];
+        return order as Receipt;
+      } catch (error: any) {
+        console.error("Database Error:", error);
+      }
+    }

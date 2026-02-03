@@ -76,7 +76,7 @@ export default function InventoryDisplay(products: List){
         if(query === ""){
             updateList(products.products)
         } else{
-            let search = products.products.filter(item => item.name.includes(query)  || item.sku.includes(query));
+            let search = products.products.filter(item => item.name.toLowerCase().includes(query.toLowerCase())  || item.sku.includes(query));
             updateList(search);
         }
     }

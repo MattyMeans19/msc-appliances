@@ -85,3 +85,35 @@ export type FormState =
     discount: number,
     type: string
   }
+
+  export type Customer = {
+      first_name: string,
+      last_name: string,
+      email: string,
+      phone: string
+  }
+
+  export type Sale = {
+    transactionId: string,
+    items: [{
+      sku: string,
+      name: string,
+      price: number
+    }]
+    status: string,
+    totalAmount: number
+    createdAt: Date,
+    fulfillmentType: string
+  }
+
+  export type Receipt = {
+    id:string,
+    firstName: string,
+    lastName: string,
+    phoneNumber: string,
+    items: any[],
+    fulfillmentType: string,
+    delivery_fee: number,
+    tax_amount: number,
+    totalAmount: number,
+  }

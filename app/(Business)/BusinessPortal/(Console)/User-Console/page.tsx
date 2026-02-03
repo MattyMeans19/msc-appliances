@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import {decrypt} from "@/lib/session";
 import { redirect } from "next/navigation";
 import PortalHeader from "@/components/portal-header";
+import { GetCustomers } from "@/actions/business/actions";
+import CustomerLookUp from "@/components/User Console/customer-look-up";
 
 export default async function UserConsole(){
     const cookie = (await cookies()).get('session')?.value;
@@ -13,6 +15,8 @@ export default async function UserConsole(){
         redirect("/BusinessPortal")
     }
 
+    const customers = await GetCustomers() as any[] | string;
+
     return(
         <div className="grow flex flex-col gap-25 h-full">
             <PortalHeader
@@ -21,10 +25,10 @@ export default async function UserConsole(){
             tools="bg-gray-200"
             />
 
-            <div className="grow flex flex-col gap-15 md:grid grid-cols-6">
-                <div className="border text-5xl mx-10 p-20 col-span-3">
-                    <span>Customer look up box</span>
-                </div>
+            <div className="grow flex flex-col gap-15 md:grid grid-cols-6 relative">
+                <CustomerLookUp 
+                    customers={customers}
+                />
                 <div className="border col-start-4 col-span-3 p-20 mx-10 text-7xl">
                     <span>Sales by date</span>
                 </div>
