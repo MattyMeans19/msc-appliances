@@ -108,7 +108,8 @@ export default function ReceiptPopUp(data : Info) {
                 /* 3. The Force Move: Ignore parents and jump to top-left */
                 #receipt-content {
                 position: absolute !important;
-                top: -500 !important;
+                display: block !important;
+                top: 0 !important;
                 left: 0 !important;
                 margin: 0 !important;
                 padding: 1cm !important;
