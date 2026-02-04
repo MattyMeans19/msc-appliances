@@ -1,7 +1,6 @@
 'use server';
 
 import pool from "@/lib/db";
-import { revalidatePath } from 'next/cache';
 import { sendOrderReceipt } from '@/lib/email';
 
 export async function ProcessPayment(paymentData: {
@@ -131,7 +130,7 @@ export async function ProcessPayment(paymentData: {
         id, "firstName", "lastName", "phoneNumber", "fulfillmentType", 
         "totalAmount", tax_amount, "transactionId", items, status, delivery_fee, coupon_code
       )
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'Paid', $10, $11)`,
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'PENDING', $10, $11)`,
       [
         `sale_${transId}`,
         paymentData.customer.firstName,
@@ -181,54 +180,7 @@ export async function ProcessPayment(paymentData: {
   }
 }
 
-export async function createSale(
-  customerData: any, 
-  cartItems: any[], 
-  total: number, 
-  fulfillmentType: 'In-Store' | 'Delivery'
-) {
-  const client = await pool.connect();
-  
-  try {
-    const saleId = `sale_${Date.now()}`;
-    // Using the AuthNet ID as the transaction ID if available
-    const transactionId = customerData.authNetId || `MSC-${Date.now()}`;
-    const itemsJson = JSON.stringify(cartItems);
 
-    await client.query(
-      `INSERT INTO "Sale" (
-        "id", 
-        "firstName", 
-        "lastName", 
-        "phoneNumber", 
-        "fulfillmentType", 
-        "totalAmount", 
-        "transactionId", 
-        "items", 
-        "status"
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'PENDING')`,
-      [
-        saleId,
-        customerData.firstName,
-        customerData.lastName,
-        customerData.phoneNumber,
-        fulfillmentType,
-        total,
-        transactionId,
-        itemsJson, // The pg driver handles JSON string strings well, or use JSON.stringify
-      ]
-    );
-
-    revalidatePath('/admin/sales'); 
-    
-    return { success: true, saleId };
-  } catch (error) {
-    console.error("Database Sale Error:", error);
-    return { success: false, error: "Critical error saving sale to database." };
-  } finally {
-    client.release();
-  }
-}
 
 export async function FinalCheck(skus: string[]) {
   try {

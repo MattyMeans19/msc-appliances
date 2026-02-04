@@ -5,7 +5,7 @@ import { CheckAccess, CreateNewUser } from "@/actions/business/actions";
 
 interface Employees {
     array: any[],
-    curentUser: string
+    currentUser: string
 
 }
 export default function EmployeeTable(props: Employees){
@@ -28,7 +28,7 @@ export default function EmployeeTable(props: Employees){
     }, [currentAccess])
 
     async function GetAccess(){
-        let access = await CheckAccess(props.curentUser);
+        let access = await CheckAccess(props.currentUser);
         changeAccess(access);
         console.log(currentAccess)
     }
@@ -64,7 +64,7 @@ export default function EmployeeTable(props: Employees){
                     <EmployeeRow
                         key={employee.id}
                         user = {employee}
-                        currentUser = {props.curentUser}
+                        currentUser = {props.currentUser}
                     />
                 ))}
                     <div className={`${newActive ? 'visible' : 'hidden'} grow absolute inset-0 w-full h-full border-5 bg-slate-300 p-10 flex flex-wrap gap-10 justify-evenly`}>

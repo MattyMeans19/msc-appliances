@@ -34,6 +34,7 @@ export default async function AdminTools(){
             general="bg-gray-200"
             inventory="bg-gray-200"
             tools="bg-gray-400"
+            currentUser={currentUser.toUpperCase()}
         />
         <div className="md:m-10 grow flex flex-col lg:grid grid-cols-5 p-2 gap-10">
             <div className="bg-slate-400 p-5 text-2xl w-full text-center rounded-2xl col-span-3 row-span-3 h-full flex flex-col relative md:static">
@@ -49,7 +50,7 @@ export default async function AdminTools(){
                 <div className="grow border-5 border-double bg-white">
                     <EmployeeTable 
                         array={userList}
-                        curentUser={currentUser.toUpperCase()}
+                        currentUser={currentUser.toUpperCase()}
                     />                
                 </div>
             </div>

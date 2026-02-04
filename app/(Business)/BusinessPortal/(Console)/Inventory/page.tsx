@@ -9,7 +9,7 @@ import { Product } from "@/lib/definitions";
 export default async function Inventory(){
     const cookie = (await cookies()).get('session')?.value;
     let sessionInfo = await decrypt(cookie);
-    let currentUser = sessionInfo?.username;
+    let currentUser = sessionInfo?.username as string;
     let productTypes = await GetTypes();
 
     if(currentUser === undefined){
@@ -29,6 +29,7 @@ export default async function Inventory(){
             general="bg-gray-200"
             inventory="bg-gray-400"
             tools="bg-gray-200"
+            currentUser={currentUser.toUpperCase()}
         />
         <InventoryDisplay 
             products={products}

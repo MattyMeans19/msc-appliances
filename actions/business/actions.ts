@@ -173,3 +173,24 @@ export async function GetReceipt(trans: string){
         console.error("Database Error:", error);
       }
     }
+
+
+export async function GetPending(){
+    try{
+        const pendingRequest = await pool.query(`SELECT * FROM "Sale" WHERE status = 'PENDING'`)
+        let pendingResults = pendingRequest.rows;
+        return pendingResults; 
+    }catch(error){
+        console.log(error)
+    }
+}
+
+export async function FulfillOrder(id:string){
+    try{
+        await pool.query(`UPDATE "Sale" SET "status" = 'COMPLETE' WHERE "transactionId" = $1`, [id]);
+        return "Order Marked as Fulfilled!"
+    } catch(error){
+        console.log(error);
+        return "Failed to mark Fulfilled!"
+    }
+}
