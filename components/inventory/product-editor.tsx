@@ -180,7 +180,7 @@ export default function ProductEditor(item: Item){
                 </div>
 
             </div>
-            <button className="place-self-center place-content-end col-start-4 col-span-2 
+            <button className="place-self-center place-content-end col-start-1 row-start-5 col-span-3 
             border-2 rounded-full px-5 text-5xl bg-red-500 active:bg-red-700 cursor-pointer"
                 onClick={() =>(SaveItem())}>
                 Save
