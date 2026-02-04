@@ -39,7 +39,7 @@ export default function PendingOrders(order: PendingSale){
                     <div key={index}>
                         <p>Sku: {item.sku.split(".")[0]}</p>
                         <p>Name: {item.name}</p>
-                        <p>Price: ${item.price}</p>
+                        <p>Price: ${(item.price/100).toFixed(2)}</p>
                     </div>
                 ))}    
             </div>

@@ -41,6 +41,7 @@ export default async function UserConsole(){
             inventory="bg-gray-200"
             tools="bg-gray-200"
             currentUser={currentUser.toUpperCase()}
+            currentPending={pendingOrders.length}
             />
 
             <div className="grow flex flex-col gap-15 md:grid grid-cols-6 relative">

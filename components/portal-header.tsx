@@ -4,29 +4,38 @@ import Link from "next/link";
 import LogoutButton from "./logout-button";
 import { GetPending } from "@/actions/business/actions";
 import { useState, useEffect } from "react";
-import { Sale } from "@/lib/definitions";
 
 interface Tabs {
     general: string,
     inventory: string,
     tools: string,
     currentUser: string
+    currentPending: number
 }
 
 export default function PortalHeader(props: Tabs){
+    const [pendingOrders, UpdatePendingOrders] = useState(props.currentPending);
+    const [timeDelay, UpdateTimeDelay] = useState(100)
     const [pulse, TogglePulse] = useState(false)
 
     useEffect(() => {
-        setTimeout(CheckPending, 1000);
-    }, [])
+        const check = setInterval(CheckPending, timeDelay);
+
+        return () => clearTimeout(check);
+    }, [timeDelay])
 
     async function CheckPending(){
         let pending = await GetPending() as any[];
-        if(pending.length === 0){
-            TogglePulse(false);
+        console.log(pending.length, pendingOrders)
+        if(pending.length >= pendingOrders && pending.length != 0){
+            TogglePulse(true);
         } else{
-            TogglePulse(true)
+            TogglePulse(false)
         }
+        if(timeDelay === 100){
+            UpdateTimeDelay(10000);
+        }
+        UpdatePendingOrders(pending.length);
     }
 
     return(

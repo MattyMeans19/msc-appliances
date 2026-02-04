@@ -2,12 +2,27 @@ import { cookies } from "next/headers";
 import {decrypt} from "@/lib/session";
 import { redirect } from "next/navigation";
 import PortalHeader from "@/components/portal-header";
-import { GetAccess, GetEmployees } from "@/actions/business/actions";
+import { GetAccess, GetEmployees, GetPending } from "@/actions/business/actions";
 import EmployeeTable from "@/components/admin-tools/employee-table";
 import Coupons from "@/components/admin-tools/coupons";
 import { GetCoupons } from "@/actions/business/coupons";
 import { GetAllSpecials } from "@/actions/business/specials"
 import SpecialsEditor from "@/components/specials/specials-editor"
+
+interface PendingSale{
+    transactionId: string,
+    items: [{
+      sku: string,
+      name: string,
+      price: number
+    }]
+    status: string,
+    totalAmount: number
+    createdAt: Date,
+    fulfillmentType: string
+    firstName: string,
+    lastName: string,
+}
 
 
 
@@ -19,6 +34,9 @@ export default async function AdminTools(){
     const userList = await GetEmployees(currentUser) as Array<any>;
 
     const access = await GetAccess(currentUser) as string;
+
+    let pendingOrders = await GetPending() as PendingSale[];
+
 
     if(currentUser === undefined){
         redirect("/BusinessPortal")
@@ -35,6 +53,8 @@ export default async function AdminTools(){
             inventory="bg-gray-200"
             tools="bg-gray-400"
             currentUser={currentUser.toUpperCase()}
+            currentPending={pendingOrders.length}
+
         />
         <div className="md:m-10 grow flex flex-col lg:grid grid-cols-5 p-2 gap-10">
             <div className="bg-slate-400 p-5 text-2xl w-full text-center rounded-2xl col-span-3 row-span-3 h-full flex flex-col relative md:static">
