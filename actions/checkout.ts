@@ -128,9 +128,9 @@ export async function ProcessPayment(paymentData: {
     await client.query(
       `INSERT INTO "Sale" (
         id, "firstName", "lastName", "phoneNumber", "fulfillmentType", 
-        "totalAmount", tax_amount, "transactionId", items, status, delivery_fee, coupon_code
+        "totalAmount", tax_amount, "transactionId", items, status, delivery_fee, coupon_code, createdAt
       )
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'PENDING', $10, $11)`,
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'PENDING', $10, $11, $12)`,
       [
         `sale_${transId}`,
         paymentData.customer.firstName,
@@ -142,7 +142,8 @@ export async function ProcessPayment(paymentData: {
         transId,
         JSON.stringify(paymentData.items),
         paymentData.deliveryFee,
-        couponToRecord
+        couponToRecord,
+        new Date().toISOString()
       ]
     );
 

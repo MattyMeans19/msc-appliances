@@ -10,6 +10,7 @@ export default function SpecialsImage(props: Image){
         <CldImage 
               alt="Specials Background"
               fill
+              sizes="full"
               src={props.image}
               className="absolute z-10"
         />

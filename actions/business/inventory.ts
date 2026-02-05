@@ -19,9 +19,9 @@ export async function GetTypes(){
 
 export async function GetSubtypes(type: string){
     try{
-        const typesRequest = await pool.query("SELECT * FROM subtypes WHERE product_type = $1", [type]);
+        const typesRequest = await pool.query("SELECT subtype FROM subtypes WHERE product_type = $1", [type]);
         let typesResponse = typesRequest.rows;
-        return typesResponse
+        return typesResponse[0].subtype
     } catch(error){
         console.log(error);
     }

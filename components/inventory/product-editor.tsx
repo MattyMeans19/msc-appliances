@@ -66,6 +66,10 @@ export default function ProductEditor(item: Item){
                 onClick={() => (item.toggle())}>
                 ❌
             </button>
+            <button className="absolute top-0 right-15 text-3xl cursor-pointer"
+                onClick={() =>(SaveItem())}>
+                💾
+            </button>
             <div className="col-span-full w-full flex justify-between border-b-5 h-fit">
                 <label htmlFor="product_name" className="col-start-1 text-center place-content-end">Product Name:</label>
                 <textarea id="product_name" maxLength={60} className="border p-5 bg-white w-full text-2xl" defaultValue={product.name}
@@ -77,7 +81,7 @@ export default function ProductEditor(item: Item){
                 </input>   
             </div>
 
-            <div className="row-start-2 col-start-1 col-span-3 w-full h-[70vh] flex flex-wrap rounded-3xl shadow-2xl border p-5 lg:ml-5">
+            <div className="row-start-2 col-start-1 col-span-3 w-full h-fit flex flex-wrap rounded-3xl shadow-2xl border p-5 lg:ml-5">
                 <h1 className="basis-full w-full text-3xl text-center underline">Photos:</h1>
                 <div className="basis-1/3 h-[60vh] flex flex-col gap-5 place-items-center overflow-y-scroll">
                     {product.photos.map((photo, index) =>(
@@ -107,7 +111,7 @@ export default function ProductEditor(item: Item){
                 
             </div>
 
-            <div className="col-start-4 row-start-2 col-span-2 w-full flex flex-col gap-5 p-5 lg:pr-15 h-[60vh] rounded-3xl shadow-2xl">
+            <div className="col-start-4 row-start-2 col-span-2 w-full flex flex-col gap-5 p-5 lg:pr-15 h-fit rounded-3xl shadow-2xl">
                 <label htmlFor="product_info" className="text-center place-content-end">Product Description</label>
                 <textarea id="product_info" maxLength={500} className="grow border-2 bg-white col-start-2 row-start-2 h-full text-2xl" defaultValue={product.info}
                     onChange={(e) => (UpdateProduct(prev => ({...prev, info: e.target.value})))}>
@@ -173,18 +177,13 @@ export default function ProductEditor(item: Item){
                         onChange={(e) => (UpdateProduct(prev => ({...prev, in_store_warranty: e.target.valueAsNumber})))}>
                     </input>
                     <label htmlFor="parts_labor_warranty" className="text-2xl basis-1/4">Parts and Labor Warranty(days)</label>
-                    <input type="number" id="parts_laborwarranty" min={0} className="border-2 w-50 text-center h-fit bg-white col-start-2 self-end"
+                    <input type="number" id="parts_labor_warranty" min={0} className="border-2 w-50 text-center h-fit bg-white col-start-2 self-end"
                             defaultValue={(product.parts_labor_warranty)}
                         onChange={(e) => (UpdateProduct(prev => ({...prev, parts_labor_warranty: e.target.valueAsNumber})))}>
                     </input>             
                 </div>
-
             </div>
-            <button className="place-self-center place-content-end col-start-1 row-start-5 col-span-3 
-            border-2 rounded-full px-5 text-5xl bg-red-500 active:bg-red-700 cursor-pointer"
-                onClick={() =>(SaveItem())}>
-                Save
-                </button>
+           
         </div>
     )
 }

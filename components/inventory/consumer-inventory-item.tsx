@@ -74,6 +74,7 @@ export default function ConsumerInventoryItem(props: SelectedProduct){
                     <CldImage 
                         alt={product.name}
                         fill // Use fill with relative parent for better responsiveness
+                        sizes="full"
                         src={product.photo}
                         crop="fill"
                         className="object-cover"

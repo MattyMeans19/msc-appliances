@@ -20,12 +20,22 @@ export default function InventoryFilter(array: ProcductType){
 
 
     async function updateSubtypes(type: string){
-        if(type != "*"){
-            const subs = await GetSubtypes(type);
-            changeSubTypes(subs);
-        }  else {
-            changeSubTypes([]);
-        }
+        if (type !== "*") {
+                const res = await GetSubtypes(type);
+                
+                // 1. Check if it's that weird Postgres string format
+                if (typeof res === 'string' && res.startsWith('{')) {
+                    const arrayData = res
+                        .replace(/{|}/g, '') // Remove the curly braces
+                        .split(',')          // Split into an array
+                        .map(item => item.trim().replace(/"/g, '')); // Remove quotes/spaces
+                    changeSubTypes(arrayData);
+                } else {
+                    changeSubTypes(res);
+                }
+            } else {
+                changeSubTypes([]);
+            }
     }
 
     async function AddType(type: string){
@@ -111,9 +121,9 @@ export default function InventoryFilter(array: ProcductType){
                                 changeSelectedSub(e.target.value);
                             }}>
                                 <option value="*">All</option>
-                                {subtypes.map((type: any, index: number) => (
-                                    <option key={index} value={type}>
-                                        {type}
+                               {subtypes.map((sub: any, index: number) => (
+                                    <option key={sub.id || index} value={sub.subtype}>
+                                        {sub} 
                                     </option>
                                 ))}
                             </select>
@@ -138,11 +148,11 @@ export default function InventoryFilter(array: ProcductType){
             
             <div className="basis-1/5 lg:basis-1/3 w-full h-full place-items-center flex flex-col p-2 gap-2 border-10 border-double border-slate-500 mt-5 md:mt-0">
                 <span className="text-center text-3xl underline">Tools</span>
-                <input type="text" placeholder="New Type" className="border w-fit text-2xl lg::text-3xl"
+                <input type="text" id="new_type" placeholder="New Type" className="border w-fit text-2xl lg::text-3xl"
                     onChange={(e) => {updateNewType(e.target.value)}}></input>
                 <button className="border-2 bg-red-500 active:bg-red-700 w-50 rounded-full self-center" onClick={() => (AddType(newType))}>Add Type</button>
                 <span className="w-full border-b"></span>
-                <input type="text" placeholder="New Subtype" className="border w-fit text-2xl lg::text-3xl"
+                <input type="text" id="new_subtype" placeholder="New Subtype" className="border w-fit text-2xl lg::text-3xl"
                     onChange={(e) => {updateNewSubtype(e.target.value)}}></input>
                 <span>FOR</span>
                 <select className="border lg:w-85" id="edit-types"

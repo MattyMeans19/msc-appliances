@@ -4,7 +4,6 @@ import { Product } from "@/lib/definitions"
 import { useState } from "react";
 import { useCart } from '@/context/CartContext';
 import WarrantyInfo from "./warranty-english";
-import CardLoading from "../Loading/card-image-loading";
 
 
 interface Item{

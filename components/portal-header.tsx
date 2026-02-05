@@ -9,8 +9,8 @@ interface Tabs {
     general: string,
     inventory: string,
     tools: string,
-    currentUser: string
-    currentPending: number
+    currentUser: string,
+    currentPending: number,
 }
 
 export default function PortalHeader(props: Tabs){
@@ -32,7 +32,7 @@ export default function PortalHeader(props: Tabs){
             TogglePulse(false)
         }
         if(timeDelay === 100){
-            UpdateTimeDelay(10000);
+            UpdateTimeDelay(60000);
         }
         UpdatePendingOrders(pending.length);
     }

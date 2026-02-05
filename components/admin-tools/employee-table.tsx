@@ -18,6 +18,7 @@ export default function EmployeeTable(props: Employees){
         password:""
     });
     const [currentAccess, changeAccess] = useState("");
+    const [button, ToggleButton] = useState(true)
 
     useEffect(() => {
         if(currentAccess === ""){
@@ -35,6 +36,15 @@ export default function EmployeeTable(props: Employees){
 
     function toggleNew(){
          changeActive(!newActive);
+         ToggleNewButton();
+    }
+
+    function ToggleNewButton(){
+        if(button === true){
+            ToggleButton(false);
+        } else if(button === false){
+            ToggleButton(true);
+        }
     }
 
     async function SaveNew(){
@@ -65,9 +75,10 @@ export default function EmployeeTable(props: Employees){
                         key={employee.id}
                         user = {employee}
                         currentUser = {props.currentUser}
+                        active={ToggleNewButton}
                     />
                 ))}
-                    <div className={`${newActive ? 'visible' : 'hidden'} grow absolute inset-0 w-full h-full border-5 bg-slate-300 p-10 flex flex-wrap gap-10 justify-evenly`}>
+                    <div className={`${newActive ? 'visible' : 'hidden'} grow absolute inset-0 w-full h-fit border-5 bg-slate-300 p-10 flex flex-wrap gap-10 justify-evenly`}>
                         <input autoComplete="off" type="text" id="username" className="h-[10%] basis-2/3 border bg-white uppercase" placeholder="User Name" onChange={(e) => changeUserInfo(prev => ({ ...prev, username: e.target.value}))}></input>
                         <input autoComplete="off" type="text" id="fname" className="h-[10%] basis-1/3 border bg-white" placeholder="First Name" onChange={(e) => changeUserInfo(prev => ({ ...prev, fname: e.target.value}))}></input>
                         <input autoComplete="off" type="text" id="lname" className="h-[10%] basis-1/3 border bg-white" placeholder="Last Name" onChange={(e) => changeUserInfo(prev => ({ ...prev, lname: e.target.value}))}></input>
@@ -79,18 +90,19 @@ export default function EmployeeTable(props: Employees){
                                 <option value="Admin">Admin</option>
                             </select>                            
                         </div>
-
-                        
-                            <input autoComplete="off" className="border bg-white" type="text" id="password"  placeholder="Password"
-                            onChange={(e) => changeUserInfo(prev => ({ ...prev, password: e.target.value}))}>
-                            </input>
+                        <input autoComplete="off" className="border bg-white" type="text" id="password"  placeholder="Password"
+                        onChange={(e) => changeUserInfo(prev => ({ ...prev, password: e.target.value}))}>
+                        </input>
+                        <div className="basis-full flex flex-nowrap gap-5">
                             <button onClick={() =>(toggleNew())} className="active:border-2 border-red-500 basis-full" onClickCapture={() => (SaveNew())}>💾 Save</button>
-                            <button onClick={() =>(toggleNew())} className="active:border-2 border-red-500 basis-full">❌ Cancel</button>
+                            <button onClick={() =>(toggleNew())} className="active:border-2 border-red-500 basis-full">❌ Cancel</button>  
+                        </div>
+                            
                     </div>
                 </div>
-                <div className={`${currentAccess != "Employee" ? 'visible' : 'hidden'}`}>
+                <div className={`${currentAccess != "Employee" && button  ? 'visible' : 'hidden'}`}>
                     <button className="px-10 text-2xl border-3 border-slate-400 active:bg-slate-400" onClick={() => (toggleNew())}>
-                        {newActive ? "Cancel ❌" : "➕Add User"} 
+                        ➕Add User
                     </button>    
                 </div>
             </div>

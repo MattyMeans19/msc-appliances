@@ -40,7 +40,7 @@ export default function Coupons(coupons: List){
                 <div className="flex flex-nowrap lg:gap-2">
                     <label htmlFor="discount" className="text-2xl basis-1/5">Amount: </label>
                     <input type="number" id="discount" autoComplete="off" className="text-2xl border w-50 lg:w-fit" onChange={(e) => updateNew(prev => ({ ...prev, discount: e.target.valueAsNumber}))}/>
-                    <select className="basis-1/5 border" onChange={(e) => updateNew(prev => ({ ...prev, type: e.target.value}))}>
+                    <select className="basis-1/5 border" id="sale_type" onChange={(e) => updateNew(prev => ({ ...prev, type: e.target.value}))}>
                     <option value="$" className="text-center text-2xl">$</option>
                     <option value="%" className="text-center text-2xl">%</option>
                     </select>    

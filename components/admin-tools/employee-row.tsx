@@ -12,22 +12,27 @@ interface Employee {
         password: string
     }
     currentUser: string
+    active: Function
+
 }
 
 export default function EmployeeRow(employee: Employee){
     const user = employee.user
     const [editActive, changeActive] = useState(false);
-        const [userInfo, changeUserInfo] = useState({
-            id: user.id,
-            username: user.username,
-            fname: user.fname,
-            lname: user.lname,
-            privilege: user.privilege,
-            password: user.password
-        });
+    const [userInfo, changeUserInfo] = useState({
+        id: user.id,
+        username: user.username,
+        fname: user.fname,
+        lname: user.lname,
+        privilege: user.privilege,
+        password: user.password
+    });
+
+
 
     function toggleEdit(){
        changeActive(!editActive)
+       employee.active();
     }
     function CancelEdit(){
         changeUserInfo({
@@ -58,9 +63,9 @@ export default function EmployeeRow(employee: Employee){
 
 
     return(
-        <div className="flex flex-col">
+        <div className="flex flex-col h-fit">
             {editActive ?
-                <div className="absolute grow inset-0 w-full h-fit md:h-full border-5 bg-slate-300 p-10 flex flex-wrap gap-10 justify-evenly place-content-center`">
+                <div className="absolute grow inset-0 w-full h-fit border-5 bg-slate-300 p-10 flex flex-wrap gap-10 justify-evenly place-content-center`">
                     <input autoComplete="off" type="text" id="username" className="h-[10%] basis-2/3 border bg-white uppercase" 
                         placeholder={userInfo.username}onChange={(e) => changeUserInfo(prev => ({ ...prev, username: e.target.value}))}></input>
                     <input autoComplete="off" type="text" id="fname" className="h-[10%] basis-1/3 border bg-white" 
@@ -76,14 +81,17 @@ export default function EmployeeRow(employee: Employee){
                             <option value="Admin">Admin</option>
                         </select>                            
                     </div>
-                        <input autoComplete="off" className="border bg-white basis-1/2" type="text" id="password"  placeholder="Password"
-                        onChange={(e) => changeUserInfo(prev => ({ ...prev, password: e.target.value}))}>
-                        </input>
+                    <input autoComplete="off" className="border bg-white basis-1/2" type="text" id="password"  placeholder="Password"
+                     onChange={(e) => changeUserInfo(prev => ({ ...prev, password: e.target.value}))}>
+                    </input>
+                    <div className="basis-full flex flex-nowrap gap-5">
                         <button onClick={() =>(toggleEdit)} className="active:border-2 border-red-500 basis-1/2" 
                             onClickCapture={() => (SaveEdit())}>💾 Save</button>
                         <button onClick={() =>(CancelEdit())} className="active:border-2 border-red-500 basis-1/2">
                             ❌ Cancel
-                        </button>
+                        </button>  
+                    </div>
+                        
                 </div> : 
                 <div className="w-full grid grid-cols-5">
                     <p className="border">{user.username}</p>

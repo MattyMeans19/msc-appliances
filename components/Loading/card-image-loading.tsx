@@ -3,7 +3,7 @@ import LoadingCircle from "../icons8-loading-50.png"
 
 export default function CardLoading(){
     return(
-        <div className="bg-slate-500 self-center w-full h-full place-content-center place-items-center" >
+        <div className="bg-slate-500 self-center z-10 w-full h-full place-content-center place-items-center" >
             <Image 
                 alt="loading"
                 width={50}
