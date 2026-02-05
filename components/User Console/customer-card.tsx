@@ -28,7 +28,7 @@ export default function CustomerCard(customer: Info){
 
     return(
         <div>
-            <div className="flex flex-col border bg-blue-100 lg:text-2xl" onClick={() => {
+            <div className="flex flex-col border bg-blue-100 lg:text-2xl cursor-pointer" onClick={() => {
                 ToggleView(true);
                 CustomerSales(currentCustomer)
             }}>

@@ -53,6 +53,7 @@ export default async function UserConsole(){
                 </div>
                 <div className="border col-span-full mx-10 mb-5 flex flex-col">
                     <h1 className="text-center text-4xl font-bold underline mb-5">Pending Orders</h1>
+                    {pendingOrders.length > 0 ?
                     <div className="w-full flex flex-col lg:grid grid-cols-2 lg:p-10 gap-5">
                         {pendingOrders.map((order, index) =>(
                             <PendingOrders 
@@ -66,9 +67,9 @@ export default async function UserConsole(){
                                 firstName= {order.firstName}
                                 lastName= {order.lastName}
                             />
-                        ))}    
-                    </div>
-                    
+                        ))}   
+                    </div> :
+                    <p className="text-5xl text-center h-full place-content-center text-red-500">No Pending Orders</p>}
                 </div>
             </div>
         </div>
