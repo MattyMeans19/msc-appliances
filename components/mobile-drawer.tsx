@@ -14,7 +14,7 @@ export default function Drawer(props: VisiblityProps){
 
     return(
         <div className={`flex flex-col gap-5 ${props.visible? 'visible' : 'hidden' }
-            absolute top-106 left-0 bg-white border-r border-b rounded-b-3xl border-red-500 p-10`}>
+            absolute top-106 left-0 z-100 bg-white border-r border-b rounded-b-3xl border-red-500 p-10`}>
             <Link href="/" className="Nav-Item" aria-description="Return to home page" onClick={() => LinkClicked()}>Home</Link>
             <Link href="/Products" className="Nav-Item" aria-description="Products page link" onClick={() => LinkClicked()}>Products</Link>
             <Link href="/Contact" aria-description="Contact information link" className="Nav-Item" onClick={() => LinkClicked()}>Contact Us</Link>
