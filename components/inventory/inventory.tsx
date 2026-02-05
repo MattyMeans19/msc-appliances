@@ -21,7 +21,7 @@ interface Filter{
 
 export default function InventoryDisplay(products: List){
     const [newItem, ToggleNew] = useState(false);
-    const [list, updateList] = useState(products.products)
+    const [list, updateList] = useState<any[]>(products.products)
     const [editingSku, setEditingSku] = useState<string | null>(null);    
 
     async function Delete(product: Product){
@@ -68,7 +68,7 @@ export default function InventoryDisplay(products: List){
 
             return matchType && matchSubtype && matchDelivery && matchSale;
         });
-
+        console.log(filteredList)
         updateList(filteredList);
     }
 

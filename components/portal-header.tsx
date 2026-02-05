@@ -26,7 +26,6 @@ export default function PortalHeader(props: Tabs){
 
     async function CheckPending(){
         let pending = await GetPending() as any[];
-        console.log(pending.length, pendingOrders)
         if(pending.length >= pendingOrders && pending.length != 0){
             TogglePulse(true);
         } else{
