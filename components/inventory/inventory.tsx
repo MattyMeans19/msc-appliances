@@ -127,7 +127,7 @@ export default function InventoryDisplay(products: List){
                     </div>
                 ))}
             </div>
-            <div className={`fixed w-full h-full place-self-center top-0 mx-50
+            <div className={`fixed w-full h-full place-self-center top-0 mx-50 z-100
                 border-5 border-double border-slate-600 bg-slate-200 ${newItem ? 'visible' : 'hidden'} flex flex-col`}>
                     <button className="text-3xl w-fit place-self-end cursor-pointer"
                         onClick={() => (ToggleNew(false))}>

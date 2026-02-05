@@ -193,7 +193,8 @@ export default function WarrantyInfo(props: Warranties) {
             </div>
             <button 
                 onClick={handleConfirmSignature}
-                className="w-full md:w-auto bg-red-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-red-700 transition-all shadow-md active:scale-95"
+                className={`w-full md:w-auto bg-red-600 text-white px-8 py-4 rounded-xl font-bold
+                    hover:bg-red-700 transition-all shadow-md active:scale-95 ${props.showSignature ? 'visible' : 'hidden'}`}
             >
                 {lang === 'EN' ? "ACCEPT & SIGN" : "ACEPTAR Y FIRMAR"}
             </button>
