@@ -31,11 +31,28 @@ export default function Navbar(){
                 ToggleLoading(false)
             }
         }
+        // if(pathname.includes("Products") && page != 'Products'){
+        //     updatePage('Products');
+        // } else if(pathname.includes("Contact") && page != 'Contact'){
+        //     updatePage('Contact');
+        // } else if(pathname.includes("About") && page != 'About'){
+        //     updatePage('About');
+        // } else if(pathname.includes("Cart") && page != 'Cart'){
+        //     updatePage('Cart');
+        // }
+
         setMounted(true);
     }, [page, pathname])
 
     function DrawerView(){
         toggleDrawer(!drawer)
+    }
+
+    function TriggerLoading(loading: string){
+        if(loading != page){
+            ToggleLoading(true)
+            updatePage(loading)
+        }
     }
 
 
@@ -53,38 +70,23 @@ export default function Navbar(){
             <div className="md:flex flex-row lg:w-full lg:h-50 hidden justify-around col-span-2 place-items-end
                  border-b-2 border-red-500/30 pb-2 rounded-2xl">
                 <Link href="/" aria-description="Return to home page" className="Nav-Item" 
-                onClick={() => {
-                    updatePage("Home");
-                    ToggleLoading(true)
-                }}>
+                onClick={() => (TriggerLoading("Home"))}>
                     Home
                 </Link>
                 <Link href="/Products" aria-description="Products page link" className="Nav-Item" 
-                onClick={() => {
-                    updatePage("Products");
-                    ToggleLoading(true)
-                }}>
+                onClick={() => (TriggerLoading("Products"))}>
                     Products
                 </Link>
                 <Link href="/Contact" aria-description="Contact information link" className="Nav-Item" 
-                 onClick={() => {
-                    updatePage("Contact");
-                    ToggleLoading(true)
-                }}>
+                 onClick={() => (TriggerLoading("Contact"))}>
                     Contact Us
                 </Link>
                 <Link href="/About" aria-description="About Metro Service Company LLC link" className="Nav-Item" 
-                 onClick={() => {
-                    updatePage("About");
-                    ToggleLoading(true)
-                }}>
+                 onClick={() => (TriggerLoading("About"))}>
                     About Us
                 </Link>
                 <Link href="/Cart" aria-description="Link to current cart" className="Nav-Item flex" 
-                 onClick={() => {
-                    updatePage("Cart");
-                    ToggleLoading(true)
-                }}>
+                 onClick={() => (TriggerLoading("Cart"))}>
                    <span className="bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center animate-in zoom-in">
                         {totalItems}
                     </span>
