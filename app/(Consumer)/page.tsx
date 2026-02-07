@@ -1,5 +1,7 @@
 import Link from "next/link";
 import Specials from "@/components/specials/specials-modal";
+import LoadingLink from "@/components/Loading/loading-link";
+
 
 export default function Home() {
   return (
@@ -21,9 +23,12 @@ export default function Home() {
             appliances to match your needs at affordable prices that just can't be beat!
           </p>
           <br/>
-          <Link href="/Products" className="p-2 lg:p-5 border-5 shadow-lg shadow-gray-800 border-slate-700 text-white bg-red-500 rounded-3xl">
+          <LoadingLink
+           href="/Products" 
+           className="p-2 lg:p-5 border-5 shadow-lg shadow-gray-800 border-slate-700 text-white bg-red-500 rounded-3xl"
+           message="Products">
             Shop All Products
-          </Link>
+          </LoadingLink>
         </div>
 
         <div className="Text-Box row-start-4 h-fit">

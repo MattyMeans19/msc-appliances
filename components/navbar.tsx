@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import LoadingPage from "./Loading/page-loading";
 import { usePathname } from "next/navigation";
 import { useCart } from '@/context/CartContext';
+import { useLoading } from "@/context/LoadingContext";
 
 export default function Navbar(){
     const [drawer, toggleDrawer] = useState(false);
@@ -17,45 +18,14 @@ export default function Navbar(){
     const pathname = usePathname();
 
     const { cart } = useCart();
+    const { isLoading, loadingMessage, startLoading } = useLoading();
     const [mounted, setMounted] = useState(false);
 
     const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
-    const pages = ["Products", "Contact", "About", "Cart", "Checkout"]
-    const isCustomPage = !pages.some(path => pathname.includes(path));
-
-    useEffect(() =>{
-        if(pathname.includes(page)){
-            ToggleLoading(false)
-        } else if(isCustomPage){
-            if(page === "Home"){
-                ToggleLoading(false)
-            }
-        }
-        // if(pathname.includes("Products") && page != 'Products'){
-        //     updatePage('Products');
-        // } else if(pathname.includes("Contact") && page != 'Contact'){
-        //     updatePage('Contact');
-        // } else if(pathname.includes("About") && page != 'About'){
-        //     updatePage('About');
-        // } else if(pathname.includes("Cart") && page != 'Cart'){
-        //     updatePage('Cart');
-        // }
-
-        setMounted(true);
-    }, [page, pathname])
 
     function DrawerView(){
         toggleDrawer(!drawer)
     }
-
-    function TriggerLoading(loading: string){
-        if(loading != page){
-            ToggleLoading(true)
-            updatePage(loading)
-        }
-    }
-
-
 
     return(
         <div className="flex flex-col md:grid grid-cols-3 w-full relative">
@@ -70,23 +40,23 @@ export default function Navbar(){
             <div className="md:flex flex-row lg:w-full lg:h-50 hidden justify-around col-span-2 place-items-end
                  border-b-2 border-red-500/30 pb-2 rounded-2xl">
                 <Link href="/" aria-description="Return to home page" className="Nav-Item" 
-                onClick={() => (TriggerLoading("Home"))}>
+                onClick={() => startLoading("Home")}>
                     Home
                 </Link>
                 <Link href="/Products" aria-description="Products page link" className="Nav-Item" 
-                onClick={() => (TriggerLoading("Products"))}>
+                onClick={() => startLoading("Products")}>
                     Products
                 </Link>
                 <Link href="/Contact" aria-description="Contact information link" className="Nav-Item" 
-                 onClick={() => (TriggerLoading("Contact"))}>
+                 onClick={() => startLoading("Contact")}>
                     Contact Us
                 </Link>
                 <Link href="/About" aria-description="About Metro Service Company LLC link" className="Nav-Item" 
-                 onClick={() => (TriggerLoading("About"))}>
+                 onClick={() => startLoading("About")}>
                     About Us
                 </Link>
                 <Link href="/Cart" aria-description="Link to current cart" className="Nav-Item flex" 
-                 onClick={() => (TriggerLoading("Cart"))}>
+                 onClick={() => startLoading("Cart")}>
                    <span className="bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center animate-in zoom-in">
                         {totalItems}
                     </span>
@@ -105,7 +75,7 @@ export default function Navbar(){
                 visible = {drawer}
                 clicked={DrawerView}
             />
-            {loading ? <LoadingPage current={page}/> : null}
+            {isLoading && <LoadingPage current={loadingMessage} />}
         </div>
 
     )

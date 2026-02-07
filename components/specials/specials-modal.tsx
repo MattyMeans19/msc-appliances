@@ -1,6 +1,7 @@
 import { GetSpecial } from "@/actions/business/specials"
 import Link from "next/link"
 import SpecialsImage from "./specials-image";
+import LoadingLink from "../Loading/loading-link";
 
 export default async function Specials(){
 
@@ -10,7 +11,12 @@ export default async function Specials(){
           <div className="z-10 p-15 col-span-full lg:col-span-2 row-start-1 row-span-2 rounded-2xl shadow-2xl shadow-black flex flex-col gap-15 justify-around relative"
             style={{color: special?.textcolor}}>
             <p className="w-full text-center place-content-center text-2xl md:text-6xl z-20">{special?.info}</p>
-            <Link href="/Products?sale=true" className="border-3 border-black rounded-3xl p-5 bg-red-500 text-white md:text-3xl place-self-center z-20">View Sales Now!</Link>
+            <LoadingLink 
+              href="/Products?sale=true" 
+              className="border-3 border-black rounded-3xl p-5 bg-red-500 text-white md:text-3xl place-self-center z-20"
+              message="Sales">
+                View Sales Now!
+              </LoadingLink>
             <SpecialsImage 
               image={special?.bgimage}
             />
