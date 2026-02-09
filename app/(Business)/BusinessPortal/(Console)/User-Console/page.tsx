@@ -3,9 +3,10 @@ import { cookies } from "next/headers";
 import {decrypt} from "@/lib/session";
 import { redirect } from "next/navigation";
 import PortalHeader from "@/components/portal-header";
-import { GetCustomers, GetPending } from "@/actions/business/actions";
+import { GetCustomers, GetSalesDates, GetPending } from "@/actions/business/actions";
 import CustomerLookUp from "@/components/User Console/customer-look-up";
 import PendingOrders from "@/components/User Console/pending-orders";
+import DailySales from "@/components/User Console/daily-sales";
 
 interface PendingSale{
     transactionId: string,
@@ -33,6 +34,7 @@ export default async function UserConsole(){
     }
 
     const customers = await GetCustomers() as any[] | string;
+    const sales = await GetSalesDates();
 
     return(
         <div className="grow flex flex-col gap-25 h-full">
@@ -48,8 +50,10 @@ export default async function UserConsole(){
                 <CustomerLookUp 
                     customers={customers}
                 />
-                <div className="border col-start-4 col-span-3 p-20 mx-10 text-7xl">
-                    <span>Sales by date</span>
+                <div className="border col-start-4 col-span-3 p-5 mx-10">
+                    <DailySales 
+                        dates = {sales}
+                    />
                 </div>
                 <div className="border col-span-full mx-10 mb-5 flex flex-col">
                     <h1 className="text-center text-4xl font-bold underline mb-5">Pending Orders</h1>

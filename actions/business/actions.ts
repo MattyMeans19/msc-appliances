@@ -194,3 +194,42 @@ export async function FulfillOrder(id:string){
         return "Failed to mark Fulfilled!"
     }
 }
+
+export async function GetSalesDates(){
+    let sales: any[] = [];
+    try{
+        let saleDates = await pool.query(`SELECT "createdAt" FROM "Sale"`);
+        saleDates.rows.forEach(element => {
+            sales.push(element.createdAt.toLocaleString('en-US', {dateStyle: 'medium'}));            
+        });
+        
+        return sales;
+    } catch(error){
+        console.log(error);
+        return "Failed to fetch sales!"
+    }
+}
+
+export async function GetSalesByDate(date: string){
+    const searchDate = `%${date}%`;
+    let total = 0;
+    let taxes = 0;
+
+    try{
+        const salesRequest = await pool.query(`SELECT * FROM "Sale" WHERE "createdAt"::TEXT ILIKE $1`, [searchDate]);
+        
+        if(salesRequest.rows.length > 0){
+            salesRequest.rows.forEach(sale =>{
+                let amount = parseFloat(sale.totalAmount);
+                let tax = parseFloat(sale.tax_amount);
+                total += amount;
+                taxes += tax;
+            })
+            return {sales: salesRequest.rows, net:(total - taxes)};
+        } else{
+            return "No Sales Data!"
+        }
+    } catch(error){
+        console.log(error)
+    }
+}
