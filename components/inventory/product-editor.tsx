@@ -97,10 +97,10 @@ export default function ProductEditor(item: Item){
                   <CldImage 
                     alt="product image"
                     src={product.photos[0]}
-                    width={1920}
-                    height={1080}
-                    crop="fill"
-                    className="h-[50vh] w-full mx-5 border-5 border-red-500"
+                    width={1200}
+                    height={1600}
+                    crop="limit"
+                    className="w-full h-full object-contain mx-5 border-5 border-red-500"
                 />    
                 </div>
                <div className="basis-full place-items-center">
@@ -111,7 +111,7 @@ export default function ProductEditor(item: Item){
                 
             </div>
 
-            <div className="col-start-4 row-start-2 col-span-2 w-full flex flex-col gap-5 p-5 lg:pr-15 h-fit rounded-3xl shadow-2xl">
+            <div className="col-start-4 row-start-2 col-span-2 w-full flex flex-col gap-5 p-5 lg:pr-15 h-full rounded-3xl shadow-2xl">
                 <label htmlFor="product_info" className="text-center place-content-end">Product Description</label>
                 <textarea id="product_info" maxLength={500} className="grow border-2 bg-white col-start-2 row-start-2 h-full text-2xl" defaultValue={product.info}
                     onChange={(e) => (UpdateProduct(prev => ({...prev, info: e.target.value})))}>

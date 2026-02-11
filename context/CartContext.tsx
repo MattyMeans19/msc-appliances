@@ -16,6 +16,8 @@ interface CartContextType {
   removeFromCart: (sku: string) => void;
   clearCart: () => void;
   cartTotal: number;
+  signature: { name: string; data: string } | null;
+  saveSignature: (name: string, data: string) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -48,8 +50,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const cartTotal = cart.reduce((acc, item) => acc + (item.price / 100) * item.quantity, 0);
 
+  const [signature, setSignature] = useState<{name: string, data: string} | null>(null);
+
+  const saveSignature = (name: string, data: string) => {
+      setSignature({ name, data });
+  };
+
   return (
-    <CartContext.Provider value={{ cart, cartTotal, addToCart, removeFromCart, clearCart }}>
+    <CartContext.Provider value={{ cart, cartTotal, addToCart, removeFromCart, clearCart, signature, saveSignature }}>
       {children}
     </CartContext.Provider>
   );
@@ -69,7 +77,9 @@ export const useCart = () => {
       addToCart: () => {},
       removeFromCart: () => {},
       clearCart: () => {},
-      cartTotal: 0
+      cartTotal: 0,
+      signature: null,
+      saveSignature: (name: string, data: string) => {},
     };
   }
   

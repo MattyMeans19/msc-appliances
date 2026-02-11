@@ -31,7 +31,7 @@ export default function ProductPage(product: Item){
                 <h2 className="lg:h-fit lg:text-3xl">SKU: {item.sku?.toString().replace(/\.0$/, '')}</h2>  
             </div>
             
-            <div className="row-start-2 col-start-1 col-span-3 w-full h-full md:h-[70vh] flex rounded-3xl shadow-2xl border p-5 lg:ml-5">
+            <div className="row-start-2 col-start-1 col-span-3 w-full h-fit lg:h-[70vh] flex rounded-3xl shadow-2xl border p-5 lg:ml-5">
                 <div className="basis-1/3 flex flex-col gap-5 place-items-center overflow-y-scroll relative bg-slate-200 animate-pulse rounded-2xl overflow-hidden">
                     {item.photos.map((photo, index) =>(
                         <CldImage 
@@ -48,14 +48,14 @@ export default function ProductPage(product: Item){
                         />
                     ))}
                 </div>
-                <div className="basis-2/3 relative bg-slate-200 animate-pulse rounded-2xl overflow-hidden">
+                <div className="basis-2/3 relative bg-slate-200 animate-pulse rounded-2xl overflow-hidden min-h-100 lg:h-full">
                     <CldImage 
                         alt="product image"
                         src={currentImage}
-                        width={1920}
-                        height={1080}
-                        crop="fit"
-                        className="h-full"
+                        width={1200}
+                        height={1600}
+                        crop="limit"
+                        className="w-full h-full object-contain"
                         onLoad={(e) => e.currentTarget.parentElement?.classList.remove('animate-pulse', 'bg-slate-200')}
                     />
                 </div>                

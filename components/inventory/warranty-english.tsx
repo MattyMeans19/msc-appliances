@@ -6,7 +6,7 @@ interface Warranties {
     parts_labor: number;
     close: () => void;
     showSignature: boolean;
-    onSign?: (signatureName: string) => void;
+    onSign?: (signatureName: string, canvasData: string) => void;
 }
 
 export default function WarrantyInfo(props: Warranties) {
@@ -15,7 +15,7 @@ export default function WarrantyInfo(props: Warranties) {
 
     const handleConfirmSignature = () => {
         if (sigName.trim().length < 2) return alert("Please enter a valid name to sign.");
-        if (props.onSign) props.onSign(sigName);
+        if (props.onSign) props.onSign(sigName, sigName);
     };
 
     const handlePrint = () => {
