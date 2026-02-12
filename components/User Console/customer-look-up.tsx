@@ -32,7 +32,7 @@ export default function CustomerLookUp(list: CustomerList){
 
 
     return(
-        <div className="border mx-10 lg:p-5 col-span-3 flex flex-col gap-10">
+        <div className="border mx-10 lg:p-5 col-span-3 flex flex-col max-h-[55vh] gap-10">
             <h1 className="text-3xl text-center underline font-bold">Customer Look-Up</h1>
             <label htmlFor="search" className="text-lg font-bold text-center"> Search by Name, Email, or Phone(xxx-xxx-xxxx)</label>
             <div className="self-center w-full text-3xl flex flex-col justify-center gap-5 border-b-5 pb-5">
@@ -43,7 +43,7 @@ export default function CustomerLookUp(list: CustomerList){
                 </button> 
             </div>
             {typeof currentList != "string" ?
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-5 overflow-y-scroll">
                 {currentList.map((customer, index) => (
                     <CustomerCard 
                         key={index}

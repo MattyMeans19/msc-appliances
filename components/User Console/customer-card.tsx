@@ -3,6 +3,7 @@ import { GetReceipt, GetSales } from "@/actions/business/actions";
 import { Customer, Receipt, Sale } from "@/lib/definitions";
 import { useState } from "react";
 import ReceiptPopUp from "./receipt";
+import WarrantyWindow from "./warranty-window";
 
 interface Info {
     customer : Customer
@@ -12,6 +13,7 @@ export default function CustomerCard(customer: Info){
     let currentCustomer = customer.customer
     const [fullView, ToggleView] = useState(false);
     const [receipt, ToggleReceipt] = useState(false);
+    const [warranty, ToggleWarranty] = useState(false);
     const [receiptData, updateReceiptData] = useState<Receipt>();
     const [sales, updateSales] = useState<Sale[] | string>([])
 
@@ -25,6 +27,7 @@ export default function CustomerCard(customer: Info){
         updateReceiptData(orderData!);
         ToggleReceipt(true);
     }
+
 
     return(
         <div>
@@ -78,6 +81,7 @@ export default function CustomerCard(customer: Info){
                                             <span>PRICE: {(item.price / 100).toFixed(2)}</span>
                                         </div>
                                     ))}
+                                    <button onClick={() => (ToggleWarranty(true))} className="absolute bottom-20 right-5 cursor-pointer">🧾Warranties</button>
                                     {receipt ? 
                                     <div className="bg-slate-400/85 fixed inset-0 z-80 w-screen h-full">
                                         <button className="fixed w-full bg-white z-100 text-3xl cursor-pointer"
@@ -85,6 +89,19 @@ export default function CustomerCard(customer: Info){
                                             ❌
                                         </button>
                                         <ReceiptPopUp order={receiptData!}/>
+                                    </div> 
+                                    : null}
+                                    {warranty ? 
+                                    <div className="bg-slate-400/85 fixed inset-0 z-80 w-screen h-full">
+                                        {receiptData?.items?.map((item, index) => (
+                                            <div key={index}>
+                                                <WarrantyWindow 
+                                                 sku={item.sku}
+                                                 signature={item.signature}
+                                                 close={ToggleWarranty(true)}
+                                                />
+                                            </div>
+                                        ))}
                                     </div> 
                                     : null}
                                 </div>

@@ -27,7 +27,7 @@ export default function CartPage() {
   const handleFinalSignature = (name: string, canvasData: string) => {
     if (signingSku) {
       // 1. Save to global Context (for the database later)
-      saveSignature(name, canvasData);
+      saveSignature(signingSku, name);
       
       // 2. Update local UI to show the "✓ Signed" badge
       setSignedNames(prev => ({ ...prev, [signingSku]: name }));

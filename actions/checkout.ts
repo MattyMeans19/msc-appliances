@@ -85,8 +85,8 @@ export async function ProcessPayment(paymentData: {
         body: JSON.stringify({
           createTransactionRequest: {
             merchantAuthentication: {
-              name: process.env.AUTHNET_API_LOGIN_ID,
-              transactionKey: process.env.AUTHNET_TRANSACTION_KEY,
+              name: process.env.NEXT_PUBLIC_AUTHNET_API_LOGIN_ID,
+              transactionKey: process.env.NEXT_PUBLIC_AUTHNET_TRANSACTION_KEY,
             },
             transactionRequest: {
               transactionType: "authCaptureTransaction",

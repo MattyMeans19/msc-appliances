@@ -8,6 +8,7 @@ interface CartItem {
   price: number;
   photo: string;
   quantity: number;
+  signature?: string;
 }
 
 interface CartContextType {
@@ -16,8 +17,7 @@ interface CartContextType {
   removeFromCart: (sku: string) => void;
   clearCart: () => void;
   cartTotal: number;
-  signature: { name: string; data: string } | null;
-  saveSignature: (name: string, data: string) => void;
+  saveSignature: (sku: string, name: string) => void; 
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -50,38 +50,32 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const cartTotal = cart.reduce((acc, item) => acc + (item.price / 100) * item.quantity, 0);
 
-  const [signature, setSignature] = useState<{name: string, data: string} | null>(null);
-
-  const saveSignature = (name: string, data: string) => {
-      setSignature({ name, data });
+  const saveSignature = (sku: string, name: string) => {
+    setCart((prev) => 
+      prev.map((item) => 
+        item.sku === sku ? { ...item, signature: name } : item
+      )
+    );
   };
 
   return (
-    <CartContext.Provider value={{ cart, cartTotal, addToCart, removeFromCart, clearCart, signature, saveSignature }}>
+    <CartContext.Provider value={{ cart, cartTotal, addToCart, removeFromCart, clearCart, saveSignature }}>
       {children}
     </CartContext.Provider>
   );
 }
 
-/** * UPDATED: The "Safe" useCart Hook
- * Returning a fallback object prevents the entire app from crashing 
- * if a component (like the Navbar) is rendered outside the provider.
- */
 export const useCart = () => {
   const context = useContext(CartContext);
-  
   if (!context) {
-    // Return empty/default values instead of throwing an error
     return {
       cart: [],
       addToCart: () => {},
       removeFromCart: () => {},
       clearCart: () => {},
       cartTotal: 0,
-      signature: null,
-      saveSignature: (name: string, data: string) => {},
+      saveSignature: (sku: string, name: string) => {},
     };
   }
-  
   return context;
 };
