@@ -28,6 +28,43 @@ export default function CustomerCard(customer: Info){
         ToggleReceipt(true);
     }
 
+    async function GetWarrantyData(id:string){
+        const warrantyData = await GetReceipt(id);
+        updateReceiptData(warrantyData!);
+        ToggleWarranty(true);
+    }
+
+    const handlePrintAll = () => {
+        const printContent = document.getElementById('all-warranties-print');
+        const printWindow = window.open('', '_blank', 'width=800,height=900');
+        
+        if (printWindow && printContent) {
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>All Warranties - Order ${receiptData}</title>
+                        <script src="https://cdn.tailwindcss.com"></script>
+                        <style>
+                            body { font-family: sans-serif; padding: 20px; }
+                            /* This forces each warranty onto a new physical page when printing */
+                            .page-break { page-break-after: always; }
+                            h1, h2 { color: #dc2626; }
+                            .sig-box { border: 2px dashed #ccc; padding: 20px; margin-top: 20px; }
+                        </style>
+                    </head>
+                    <body>
+                        ${printContent.innerHTML}
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 500);
+        }
+    };
+
 
     return(
         <div>
@@ -65,15 +102,18 @@ export default function CustomerCard(customer: Info){
                         <p className="text-5xl">{sales}</p> :
                         <div className="w-full flex flex-col gap-5 px-10 min-h-full">
                             {sales.map((sale, index) => (
-                                <div key={index} className="flex flex-col gap-2 lg:gap-0 lg:grid grid-cols-4 p-10 lg:text-2xl border-5 border-double bg-white relative">
-                                    <button onClick={() => (GetReceieptData(sale.transactionId))} className="absolute top-2.5 right-5 cursor-pointer">🧾Receipt</button>
+                                <div key={index} className="flex flex-col gap-2 lg:gap-5 lg:grid grid-cols-3 p-10 lg:text-2xl border-5 border-double bg-white relative">
+                                    <div className="absolute top-2.5 right-5 flex flex-col gap-5">
+                                        <button onClick={() => (GetReceieptData(sale.transactionId))} className="cursor-pointer border-b border-red-500">🧾Receipt</button>
+                                        <button onClick={() => (GetWarrantyData(sale.transactionId))} className="cursor-pointer border-b border-red-500">📜 Warranty</button>
+                                    </div>
                                     <span className="col-span-1">Transaction #: {sale.transactionId}</span>
                                     <span className={`col-span-1 lg:text-center ${sale.status === 'Pending' ? 'text-red-500' : 'text-green-600'}`}>
                                         Status: {sale.status}
                                     </span>
                                     <span className="col-span-1">Total: ${sale.totalAmount}</span>
-                                    <span>Date: {sale.createdAt.toLocaleString('en-US', {dateStyle: 'medium'})}</span>
-                                    <span>Fulfillment: {sale.fulfillmentType}</span>
+                                    <span className="col-span-1 w-full text-center">Date: {sale.createdAt.toLocaleString('en-US', {dateStyle: 'medium'})}</span>
+                                    <span className="col-span-1 w-full text-center">Fulfillment: {sale.fulfillmentType}</span>
                                     {sale.items.map((item, index) => (
                                         <div key={index} className="col-span-full grid grid-cols-3 gap-10 mt-10 pt-5 border-t-2">
                                             <span className="text-end">SKU: {item.sku.split('.')[0]}</span>
@@ -81,7 +121,6 @@ export default function CustomerCard(customer: Info){
                                             <span>PRICE: {(item.price / 100).toFixed(2)}</span>
                                         </div>
                                     ))}
-                                    <button onClick={() => (ToggleWarranty(true))} className="absolute bottom-20 right-5 cursor-pointer">🧾Warranties</button>
                                     {receipt ? 
                                     <div className="bg-slate-400/85 fixed inset-0 z-80 w-screen h-full">
                                         <button className="fixed w-full bg-white z-100 text-3xl cursor-pointer"
@@ -91,19 +130,32 @@ export default function CustomerCard(customer: Info){
                                         <ReceiptPopUp order={receiptData!}/>
                                     </div> 
                                     : null}
-                                    {warranty ? 
-                                    <div className="bg-slate-400/85 fixed inset-0 z-80 w-screen h-full">
-                                        {receiptData?.items?.map((item, index) => (
-                                            <div key={index}>
-                                                <WarrantyWindow 
-                                                 sku={item.sku}
-                                                 signature={item.signature}
-                                                 close={ToggleWarranty(true)}
-                                                />
+                                    {warranty && (
+                                        <div className="bg-slate-400/85 fixed inset-0 z-80 w-screen h-full overflow-y-auto">
+                                            {/* Unified Control Bar */}
+                                            <div className="sticky top-0 z-100 bg-white p-4 flex justify-between items-center shadow-md">
+                                                <h2 className="font-bold ml-4">Warranty Documents</h2>
+                                                <div className="flex gap-4">
+                                                    <button onClick={handlePrintAll} className="bg-blue-600 text-white px-4 py-2 rounded">
+                                                        🖨️ Print All Warranties
+                                                    </button>
+                                                    <button onClick={() => ToggleWarranty(false)} className="text-2xl">❌</button>
+                                                </div>
                                             </div>
-                                        ))}
-                                    </div> 
-                                    : null}
+
+                                            <div id="all-warranties-print" className="flex flex-col gap-8 p-10">
+                                                {receiptData?.items?.map((item, index) => (
+                                                    <div key={index} className="page-break bg-white rounded-3xl overflow-hidden shadow-lg">
+                                                        <WarrantyWindow 
+                                                            sku={item.sku}
+                                                            signature={item.signature}
+                                                            hideControls={true} // Add this prop to hide the individual print buttons
+                                                        />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                         </div>}

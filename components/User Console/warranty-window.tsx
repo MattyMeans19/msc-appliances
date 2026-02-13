@@ -5,11 +5,11 @@ import { GetProduct } from '@/actions/business/inventory';
 
 interface WarrantyDisplayProps {
     sku: string;
-    signature: string; // This is the {Signature} prop
-    close: () => void;
+    signature: string;
+    hideControls?: boolean;
 }
 
-export default function WarrantyDisplay({ sku, signature, close }: WarrantyDisplayProps) {
+export default function WarrantyWindow({ sku, signature, hideControls }: WarrantyDisplayProps) {
     const [lang, setLang] = useState<'EN' | 'ES'>('EN');
     const [product, setProduct] = useState<any>(null);
     const [loading, setLoading] = useState(true);
@@ -50,14 +50,6 @@ export default function WarrantyDisplay({ sku, signature, close }: WarrantyDispl
                     </head>
                     <body>
                         ${printContent?.innerHTML}
-                        <div class="sig-box">
-                            <p style="font-size: 0.75rem; color: #666; text-transform: uppercase; font-weight: bold;">Digital Signature Verification</p>
-                            <p style="font-family: 'Times New Roman', serif; font-style: italic; font-size: 1.75rem; margin: 10px 0;">
-                                Signed by: ${signature}
-                            </p>
-                            <p style="font-size: 0.85rem;"><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
-                            <p style="font-size: 0.85rem;"><strong>Product SKU:</strong> ${sku}</p>
-                        </div>
                     </body>
                 </html>
             `);
@@ -78,8 +70,16 @@ export default function WarrantyDisplay({ sku, signature, close }: WarrantyDispl
         );
     }
 
-    return (
-        <div className="flex flex-col h-full w-full bg-white max-h-[90vh] rounded-3xl overflow-hidden shadow-2xl border border-slate-200">
+    return (    
+        <div className="mt-15 flex flex-col h-full w-full bg-white max-h-[90vh] rounded-3xl overflow-hidden shadow-2xl border border-slate-200">
+            {!hideControls && (
+                <div className="flex w-full border-b justify-end gap-6 p-4 bg-slate-50 sticky top-0 z-20 items-center">
+                    <button onClick={() => setLang(lang === 'EN' ? 'ES' : 'EN')}>
+                        {lang === 'EN' ? 'ESPAÑOL' : 'ENGLISH'}
+                    </button>
+                    <button onClick={handlePrint}>🖨️</button>
+                </div>
+            )}
             {/* Control Bar */}
             <div className="flex w-full border-b justify-end gap-6 p-4 bg-slate-50 sticky top-0 z-20 items-center">
                 <button 
@@ -89,7 +89,6 @@ export default function WarrantyDisplay({ sku, signature, close }: WarrantyDispl
                     {lang === 'EN' ? 'ESPAÑOL' : 'ENGLISH'}
                 </button>
                 <button className="text-xl hover:scale-110 active:scale-95 transition-all" title="Print Policy" onClick={handlePrint}>🖨️</button>
-                <button className="text-xl hover:scale-110 active:scale-95 transition-all" title="Close" onClick={close}>❌</button>
             </div>
 
             <div id="warranty-legal-text" className="px-10 py-8 overflow-y-auto">
