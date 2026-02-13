@@ -102,18 +102,18 @@ export default function CustomerCard(customer: Info){
                         <p className="text-5xl">{sales}</p> :
                         <div className="w-full flex flex-col gap-5 px-10 min-h-full">
                             {sales.map((sale, index) => (
-                                <div key={index} className="flex flex-col gap-2 lg:gap-5 lg:grid grid-cols-3 p-10 lg:text-2xl border-5 border-double bg-white relative">
-                                    <div className="absolute top-2.5 right-5 flex flex-col gap-5">
-                                        <button onClick={() => (GetReceieptData(sale.transactionId))} className="cursor-pointer border-b border-red-500">🧾Receipt</button>
-                                        <button onClick={() => (GetWarrantyData(sale.transactionId))} className="cursor-pointer border-b border-red-500">📜 Warranty</button>
-                                    </div>
+                                <div key={index} className="flex flex-col gap-2 lg:gap-5 md:grid grid-cols-3 p-10 lg:text-2xl border-5 border-double bg-white relative">
                                     <span className="col-span-1">Transaction #: {sale.transactionId}</span>
                                     <span className={`col-span-1 lg:text-center ${sale.status === 'Pending' ? 'text-red-500' : 'text-green-600'}`}>
                                         Status: {sale.status}
                                     </span>
                                     <span className="col-span-1">Total: ${sale.totalAmount}</span>
-                                    <span className="col-span-1 w-full text-center">Date: {sale.createdAt.toLocaleString('en-US', {dateStyle: 'medium'})}</span>
-                                    <span className="col-span-1 w-full text-center">Fulfillment: {sale.fulfillmentType}</span>
+                                    <span className="col-span-1 w-full lg:text-center">Date: {sale.createdAt.toLocaleString('en-US', {dateStyle: 'medium'})}</span>
+                                    <span className="col-span-1 w-full lg:text-center">Fulfillment: {sale.fulfillmentType}</span>
+                                    <div className="lg:absolute top-2.5 right-5 flex flex-col gap-5">
+                                        <button onClick={() => (GetReceieptData(sale.transactionId))} className="cursor-pointer border-b w-fit self-center border-red-500">🧾Receipt</button>
+                                        <button onClick={() => (GetWarrantyData(sale.transactionId))} className="cursor-pointer border-b w-fit self-center border-red-500">📜 Warranty</button>
+                                    </div>
                                     {sale.items.map((item, index) => (
                                         <div key={index} className="col-span-full grid grid-cols-3 gap-10 mt-10 pt-5 border-t-2">
                                             <span className="text-end">SKU: {item.sku.split('.')[0]}</span>

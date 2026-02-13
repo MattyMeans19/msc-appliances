@@ -40,14 +40,20 @@ export async function ProcessPayment(paymentData: {
 
     // 2. ATOMIC INVENTORY LOCK
     const invResult = await client.query(
-      "UPDATE inventory SET count = count - 1 WHERE sku = ANY($1) AND count > 0 RETURNING sku",
-      [skus]
-    );
+          "UPDATE inventory SET count = count - 1 WHERE sku = ANY($1) AND count > 0 RETURNING sku, count",
+          [skus]
+        );
 
-    if (invResult.rowCount !== skus.length) {
-      await client.query('ROLLBACK');
-      return { success: false, error: "Item sold out just now!" };
-    }
+        if (invResult.rowCount !== skus.length) {
+          await client.query('ROLLBACK');
+          return { success: false, error: "Item sold out just now!" };
+        }
+
+        // NEW: Delete any items that just hit 0 count
+        await client.query(
+          "DELETE FROM inventory WHERE sku = ANY($1) AND count <= 0",
+          [skus]
+        );
 
     // 3. PRE-SAVE/UPDATE CUSTOMER
     const couponToRecord = paymentData.couponCode ? paymentData.couponCode.toUpperCase() : null;
